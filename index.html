@@ -719,6 +719,7 @@ const PRICES_STANDALONE = {
   haifa:{label:'חיפה',adultOW:35},akko:{label:'עכו/נהריה',adultOW:40}
 };
 const DAY_PASS_A = 99, DAY_PASS_C = 49.5;
+const BUS_RIDE_A = 5.9, BUS_RIDE_C = 2.95; // כרטיס נסיעה בודד: אוטובוס / רכבת קלה
 
 // ═══════════════════════ STATE ═══════════════════════
 var profile = {travelers:[], address:'', station:'יבנה מזרח', extraMins:0};
@@ -997,40 +998,73 @@ function toggleTransport(type) {
 }
 
 // ═══════════════════════ COST PREVIEW ═══════════════════════
+// מחשב כמה נסיעות אוטובוס/רכבת קלה בתשלום לאדם
+function extraRideCount() {
+  var bus = useBus ? 2 : 0;     // הלוך + חזור
+  var lr  = useLightRail ? 2 : 0;
+  // כשמשלבים אוטובוס + רכבת קלה — נסיעה אחת בחינם (החלפה תוך 90 דק')
+  if (useBus && useLightRail) return bus + lr - 1;
+  return bus + lr;
+}
+
+function extraCostPerPerson(cat) {
+  var rides = extraRideCount();
+  if (!rides) return 0;
+  return rides * (cat==='adult' ? BUS_RIDE_A : BUS_RIDE_C);
+}
+
 function calcTripCost(cityKey, type) {
   var c=CITIES[cityKey]; if(!c) return 0;
   var total=0;
   profile.travelers.forEach(function(t){
     var cat=priceCategory(t.age); if(cat==='free') return;
-    var ow=cat==='adult'?c.adultOW:c.adultOW*0.5;
-    if(type==='singles')    total+=ow*2;
-    else if(type==='mixed') total+=cat==='adult'?DAY_PASS_A:ow*2;
-    else                    total+=cat==='adult'?DAY_PASS_A:DAY_PASS_C;
+    var ow = cat==='adult' ? c.adultOW : c.adultOW*0.5;
+    var extra = extraCostPerPerson(cat);
+    if(type==='singles')    total += ow*2 + extra;
+    else if(type==='mixed') total += cat==='adult' ? DAY_PASS_A : ow*2 + extra;
+    else                    total += cat==='adult' ? DAY_PASS_A : DAY_PASS_C;
   });
   return total;
+}
+
+function extraRideLabel() {
+  if (useBus && useLightRail) return 'אוטובוס + רכבת קלה (3 נסיעות, החלפה אחת חינם)';
+  if (useBus)       return 'אוטובוס (2 נסיעות הלוך-חזור)';
+  if (useLightRail) return 'רכבת קלה (2 נסיעות הלוך-חזור)';
+  return '';
 }
 
 function updateCostPreview() {
   var wrap=document.getElementById('cost-preview-wrap');
   if(!selectedCity||!profile.travelers.length){wrap.innerHTML='';return;}
+  var c=CITIES[selectedCity];
   var o1=calcTripCost(selectedCity,'singles'),o2=calcTripCost(selectedCity,'mixed'),o3=calcTripCost(selectedCity,'all');
   var best=Math.min(o1,o2,o3);
-  var breakdowns=profile.travelers.map(function(t){
+  var extraLabel = extraRideLabel();
+  var extraAdult = extraCostPerPerson('adult'), extraChild = extraCostPerPerson('child');
+
+  var rows = profile.travelers.map(function(t){
     var cat=priceCategory(t.age);
-    if(cat==='free') return t.name+': חינם';
-    var ow=cat==='adult'?CITIES[selectedCity].adultOW:CITIES[selectedCity].adultOW*0.5;
-    return t.name+': ₪'+(ow*2).toFixed(0);
-  }).join(' | ');
-  var passNote='';
-  if(best<o1){
-    var save=(o1-best).toFixed(0);
-    passNote='💳 '+(o2<=o3?'חופשי יומי למבוגרים + כרטיסים לילדים':'חופשי יומי לכולם')+' — חוסך ₪'+save+'!';
-  }
+    if(cat==='free') return '<div class="cp-row"><span>'+t.name+'</span><span>חינם (עד 5)</span></div>';
+    var ow = cat==='adult'?c.adultOW:c.adultOW*0.5;
+    var extra = cat==='adult'?extraAdult:extraChild;
+    var detail = '₪'+(ow*2).toFixed(0)+' רכבת'+(extra?' + ₪'+extra.toFixed(0)+' תחב׳':'');
+    return '<div class="cp-row"><span>'+t.name+' ('+(cat==='adult'?'מבוגר':'ילד')+')</span><span>'+detail+'</span></div>';
+  }).join('');
+
+  var passRec='';
+  if(best===o3) passRec='💳 חופשי יומי לכולם — הכי משתלם! מכסה רכבת+אוטובוס+רכבת קלה';
+  else if(best===o2) passRec='💳 חופשי יומי למבוגרים + כרטיסים לילדים — הכי משתלם!';
+  else passRec = (extraLabel?'🎫 כרטיסים בודדים — הכי משתלם ל'+extraLabel:'🎫 כרטיסים בודדים — הכי משתלם');
+
+  var savings = Math.max(o1-best, 0);
+
   wrap.innerHTML='<div class="cost-preview">'
-    +'<div class="cp-title">עלות משוערת ל-'+profile.travelers.length+' נוסעים</div>'
-    +'<div class="cp-row"><span>'+breakdowns+'</span></div>'
-    +'<div class="cp-total"><span>סה"כ הלוך-חזור:</span><span>₪'+best.toFixed(0)+'</span></div>'
-    +(passNote?'<div class="cp-pass">'+passNote+'</div>':'')
+    +'<div class="cp-title">💰 חישוב עלות ל-'+profile.travelers.length+' נוסעים</div>'
+    +rows
+    +(extraLabel?'<div class="cp-row" style="font-size:.7rem;color:var(--muted);">תחבורה נוספת: '+extraLabel+'</div>':'')
+    +'<div class="cp-total"><span>🏆 הכי משתלם:</span><span>₪'+best.toFixed(0)+'</span></div>'
+    +'<div class="cp-pass">'+passRec+(savings>2?' — חוסך ₪'+savings.toFixed(0)+' לעומת כרטיסים':'')+'</div>'
     +'</div>';
 }
 
@@ -1236,21 +1270,43 @@ function generateRoute() {
       +'</div>';
   }).join('');
 
-  // Cost
+  // Cost — עם תחבורה נוספת
+  var extraLabel = extraRideLabel();
+  var extraA = extraCostPerPerson('adult'), extraC = extraCostPerPerson('child');
+  var extraNote = extraLabel
+    ? '🚌 תחבורה נוספת: '+extraLabel+' (₪'+(extraA).toFixed(2)+' מבוגר / ₪'+(extraC).toFixed(2)+' ילד)'
+    : '';
+
+  function perPersonBreakdown(type) {
+    return profile.travelers.map(function(t){
+      var cat=priceCategory(t.age); if(cat==='free') return t.name+': חינם';
+      var ow=cat==='adult'?city.adultOW:city.adultOW*0.5;
+      var extra=cat==='adult'?extraA:extraC;
+      if(type==='singles')    return t.name+': ₪'+(ow*2+extra).toFixed(0)+' (רכבת ₪'+(ow*2).toFixed(0)+(extra?' + תחב׳ ₪'+extra.toFixed(0):'')+')'  ;
+      if(type==='mixed')      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+DAY_PASS_A:'₪'+(ow*2+extra).toFixed(0)+' כרטיסים');
+      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+DAY_PASS_A:'חופשי יומי ₪'+DAY_PASS_C);
+    }).join('<br>');
+  }
+
   var opts=[
-    {name:'כרטיסים בודדים הלוך-חזור',total:o1},
-    {name:'חופשי יומי למבוגרים + כרטיסים לילדים',total:o2},
-    {name:'חופשי יומי לכולם',total:o3}
+    {key:'singles', name:'🎫 כרטיסים בודדים הלוך-חזור'+(extraLabel?' + תחבורה נוספת':''), total:o1, brk:perPersonBreakdown('singles')},
+    {key:'mixed',   name:'💳 חופשי יומי למבוגרים + כרטיסים לילדים', total:o2, brk:perPersonBreakdown('mixed'),
+      note:'חופשי יומי מכסה: רכבת + אוטובוס + רכבת קלה ללא הגבלה!'},
+    {key:'all',     name:'💳 חופשי יומי לכולם', total:o3, brk:perPersonBreakdown('all'),
+      note:'חופשי יומי מכסה: רכבת + אוטובוס + רכבת קלה ללא הגבלה!'}
   ];
   html+='<div class="cost-result">'
-    +'<div class="cr-title">עלויות לטיול</div>'
+    +'<div class="cr-title">💰 השוואת עלויות לטיול</div>'
+    +(extraNote?'<div style="font-size:.68rem;color:var(--muted);padding:4px 8px;margin-bottom:4px;">'+extraNote+'</div>':'')
     +opts.map(function(o){
       var ib=Math.abs(o.total-best)<.01;
       return '<div class="cr-opt'+(ib?' best':'')+'">'
         +'<div class="cr-opt-top"><span class="cr-name">'+o.name+'</span>'+(ib?'<span class="cr-rec">✅ הכי משתלם</span>':'')+'</div>'
-        +'<div class="cr-total">₪'+o.total.toFixed(0)+'</div></div>';
+        +'<div style="font-size:.65rem;color:var(--muted);margin:3px 0;line-height:1.4;">'+o.brk+'</div>'
+        +(o.note&&ib?'<div style="font-size:.63rem;color:#16a34a;margin-top:2px;">✓ '+o.note+'</div>':'')
+        +'<div class="cr-total">₪'+o.total.toFixed(0)+' סה"כ</div></div>';
     }).join('')
-    +'<div class="cr-note">* משוער | ילדים עד 5 חינם | rail.co.il</div>'
+    +'<div class="cr-note">* כרטיס אוטובוס/רכבת קלה ₪5.90 מבוגר | ₪2.95 ילד | חופשי יומי ₪99/₪49.50 | rail.co.il</div>'
     +'</div>';
 
   html+='<button onclick="document.getElementById(\'generated-route\').innerHTML=\'\'" style="width:100%;background:var(--border);color:var(--navy);border:none;padding:12px;border-radius:10px;font-family:Heebo,sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;margin-top:8px;min-height:44px;">← שני מסלול אחר</button>';
