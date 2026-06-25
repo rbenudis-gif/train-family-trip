@@ -186,6 +186,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .ni-body{flex:1;}
 .ni-name{font-size:.82rem;font-weight:700;color:var(--navy);}
 .ni-desc{font-size:.7rem;color:var(--muted);margin-top:1px;line-height:1.35;}
+.sub-stops{margin-top:5px;padding-right:8px;border-right:2px dashed var(--gold);}
+.sub-stop{display:flex;gap:5px;align-items:flex-start;padding:2px 0;}
+.sub-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
+.sub-name{font-size:.66rem;font-weight:700;color:var(--navy);}
 .ni-price{font-size:.68rem;color:var(--green);font-weight:700;margin-top:1px;}
 .ni-actions{display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap;}
 .ni-rating{font-size:.65rem;color:#f59e0b;font-weight:700;}
@@ -480,26 +484,29 @@ const HOME_STATIONS = [
 ];
 
 const CITIES = {
-  ashdod:    {label:'אשדוד',    emoji:'🏖️', adultOW:11,   travel:'15 דק׳ ישיר!', travelMins:15, diff:'קל מאוד',  stations:['ashdod_yam'], hasLR:false, event:null},
-  tlv:       {label:'תל אביב', emoji:'🏙️', adultOW:16.5, travel:'35 דק׳',        travelMins:35, diff:'קל',        stations:['tlv_hagana','tlv_hashalom','tlv_savidor','tlv_university'], hasLR:true,  event:'🎭 פסטיבל קיץ סוזן דלאל — כל יולי!'},
-  jerusalem: {label:'ירושלים', emoji:'🏛️', adultOW:26.5, travel:'70 דק׳',        travelMins:70, diff:'בינוני',   stations:['jlm_navon'], hasLR:true,  event:'🎼 פסטיבל ישראל ה-65 — מ-28 יולי!'},
-  haifa:     {label:'חיפה',    emoji:'🏔️', adultOW:35,   travel:'90 דק׳',        travelMins:90, diff:'בינוני',   stations:['binyamina','hf_bat_galim','hf_shamona','hf_mifratz'], hasLR:false, event:null},
-  akko:      {label:'עכו',     emoji:'⚓', adultOW:40,   travel:'120 דק׳',       travelMins:120,diff:'יום ארוך', stations:['akko'], hasLR:false, event:null}
+  ashdod:    {label:'אשדוד',    emoji:'🏖️', adultOW:21,   dayPassA:32.5, travel:'15 דק׳ ישיר!', travelMins:15, diff:'קל מאוד',  stations:['ashdod_yam'], hasLR:false, event:null},
+  tlv:       {label:'תל אביב', emoji:'🏙️', adultOW:27,   dayPassA:42,   travel:'35 דק׳',        travelMins:35, diff:'קל',        stations:['tlv_hagana','tlv_hashalom','tlv_savidor','tlv_university'], hasLR:true,  event:'🎭 פסטיבל קיץ סוזן דלאל — כל יולי!'},
+  jerusalem: {label:'ירושלים', emoji:'🏛️', adultOW:30.5, dayPassA:47,   travel:'70 דק׳',        travelMins:70, diff:'בינוני',   stations:['jlm_navon'], hasLR:true,  event:'🎼 פסטיבל ישראל ה-65 — מ-28 יולי!'},
+  haifa:     {label:'חיפה',    emoji:'🏔️', adultOW:30.5, dayPassA:47,   travel:'90 דק׳',        travelMins:90, diff:'בינוני',   stations:['binyamina','hf_bat_galim','hf_shamona','hf_mifratz'], hasLR:false, event:null},
+  akko:      {label:'עכו',     emoji:'⚓', adultOW:52.5, dayPassA:80.5, travel:'120 דק׳',       travelMins:120,diff:'יום ארוך', stations:['akko'], hasLR:false, event:null}
 };
 
 // visitTime = recommended time at station in minutes
 const STATIONS = {
   ashdod_yam:{name:'אשדוד-עד הים',badge:'ישיר — 15 דק׳!',optional:false,arrOffset:15,visitTime:210,
     nearby:[
-      {name:'חוף אשדוד',     walk:'2 דק׳', price:'חינם', rating:'4.3',
-       desc:'ממש מהרציף אל החוף. חול נקי, מקלחות, חדרי הלבשה ומציל. מתאים לשחייה ולים פנאי. לא עמוס ביחס לחופי ת"א.',
-       mapUrl:'https://maps.google.com/?q=חוף+אשדוד'},
-      {name:'טיילת אשדוד',   walk:'5 דק׳', price:'חינם', rating:'4.2',
-       desc:'פרומנדה מסודרת עם בתי קפה, מסעדות, גלידריות ומכוני שיזוף. יפה במיוחד בשעות הצהריים. ספסלים בצל לאורך הדרך.',
-       mapUrl:'https://maps.google.com/?q=טיילת+אשדוד'},
-      {name:'קניון הים',     walk:'8 דק׳', price:'חינם', rating:'3.9',
-       desc:'קניון מהנה עם כל הרשתות הגדולות, בית קפה ומזנון. טוב לנפוח מהחום שעה-שעתיים.',
-       mapUrl:'https://maps.google.com/?q=קניון+הים+אשדוד'},
+      {name:'חוף אשדוד', walk:'2 דק׳', price:'חינם', rating:'4.3',
+       desc:'ממש מהרציף אל החוף. חול נקי, מקלחות, חדרי הלבשה ומציל.',
+       mapUrl:'https://maps.google.com/?q=חוף+אשדוד',
+       subStops:[{name:'כניסה ראשית מול התחנה'},{name:'שירותים ומקלחות — ימין'},{name:'חוף צפוני — שקט יותר'},{name:'חוף דרומי — בר ים ומוזיקה'}]},
+      {name:'טיילת אשדוד', walk:'5 דק׳', price:'חינם', rating:'4.2',
+       desc:'פרומנדה עם בתי קפה, גלידריות ומכוני שיזוף. ספסלים בצל לאורך הדרך.',
+       mapUrl:'https://maps.google.com/?q=טיילת+אשדוד',
+       subStops:[{name:'ס"מ 0 — ממול לרכבת'},{name:'כיכר הקיץ — 200 מ׳'},{name:'מגרש כדורעף ים'},{name:'בר ים ואזור מבוגרים'},{name:'קצה — מול קניון הים'}]},
+      {name:'קניון הים', walk:'8 דק׳', price:'חינם', rating:'3.9',
+       desc:'קניון עם כל הרשתות הגדולות ומזנון. טוב לנפוח מהחום.',
+       mapUrl:'https://maps.google.com/?q=קניון+הים+אשדוד',
+       subStops:[{name:'כניסה מהטיילת'},{name:'קומת מזון — קרקע'},{name:'HOT CINEMA — קומה 2'},{name:'ספורט אקסטרים — קומה 3'}]},
     ],
     restaurants:[
       {name:'XL בר ים', type:'מסעדת שף', walk:'3 דק׳', rating:'4.3', price:'₪₪', desc:'שולחנות על הפרומנדה ממש מול הים. דגים טריים, פסטה ים תיכונית, עוגת שוקולד לגמר.', mapUrl:'https://maps.google.com/?q=XL+בר+ים+אשדוד'},
@@ -510,18 +517,22 @@ const STATIONS = {
 
   tlv_hagana:{name:'ת"א-הגנה',badge:'נווה צדק + מתחם התחנה',optional:false,arrOffset:35,visitTime:120,
     nearby:[
-      {name:'מתחם התחנה',  walk:'3 דק׳',  price:'חינם', rating:'4.5',
-       desc:'מבנים היסטוריים של תחנת הרכבת הראשונה בארץ (1892). בתוכו: גלריות עיצוב, בוטיקים, מסעדות ובתי קפה. כניסה חינם. הילדים אוהבים לצלם בקרון הישן.',
-       mapUrl:'https://maps.google.com/?q=מתחם+התחנה+תל+אביב'},
-      {name:'נווה צדק',    walk:'8 דק׳',  price:'חינם', rating:'4.7',
-       desc:'השכונה הכי ציורית בתל אביב. בתים צבעוניים, חנויות וינטג׳, גלריות אמנות ובתי קפה קטנים. רחוב שבזי הוא הלב — חייבות לטייל שם. מעולה לצילומים.',
-       mapUrl:'https://maps.google.com/?q=נווה+צדק+תל+אביב'},
-      {name:'שוק הכרמל',  walk:'10 דק׳', price:'חינם', rating:'4.6',
-       desc:'השוק הכי גדול בתל אביב. פירות, ירקות, בשמים, בגדים ואוכל מוכן. כדאי להגיע רעבות — שאוורמה, מיצים טריים ולחמנייה חמה ממש בשוק.',
-       mapUrl:'https://maps.google.com/?q=שוק+הכרמל+תל+אביב'},
-      {name:'פלורנטין',   walk:'12 דק׳', price:'חינם', rating:'4.4',
-       desc:'שכונת הגרפיטי וה-street art של ת"א. כל קיר הוא יצירת אמנות. בתי קפה עצמאיים, חנויות וינטג׳ ורחוב בן סרוק. המקום הכי cool בעיר לגילאי 13–25.',
-       mapUrl:'https://maps.google.com/?q=פלורנטין+תל+אביב'},
+      {name:'מתחם התחנה', walk:'3 דק׳', price:'חינם', rating:'4.5',
+       desc:'תחנת הרכבת הראשונה בארץ (1892). גלריות עיצוב, בוטיקים ובתי קפה. כניסה חינם.',
+       mapUrl:'https://maps.google.com/?q=מתחם+התחנה+תל+אביב',
+       subStops:[{name:'כניסה מרחוב קוגמן'},{name:'קרון הרכבת ההיסטורי 1892 — לצילומים!'},{name:'חצר ראשונה — גלריות עיצוב ובוטיקים'},{name:'חצר שנייה — מסעדות ובתי קפה'},{name:'בניין 4 — חנויות מיוחדות'}]},
+      {name:'נווה צדק', walk:'8 דק׳', price:'חינם', rating:'4.7',
+       desc:'השכונה הכי ציורית בת"א. בתים צבעוניים, חנויות וינטג׳ וגלריות אמנות.',
+       mapUrl:'https://maps.google.com/?q=נווה+צדק+תל+אביב',
+       subStops:[{name:'פינת שבזי ורוקח — לב הרובע'},{name:'רחוב שבזי — חנויות וינטג׳ וקפה'},{name:'בית שטיין — מוזיאון ההיסטוריה'},{name:'סמטת רוקח — ציורי קיר ייחודיים'},{name:'כיכר קאלו — פסל ומפגש'}]},
+      {name:'שוק הכרמל', walk:'10 דק׳', price:'חינם', rating:'4.6',
+       desc:'השוק הגדול של ת"א. פירות, ירקות, בשמים, בגדים ואוכל מוכן.',
+       mapUrl:'https://maps.google.com/?q=שוק+הכרמל+תל+אביב',
+       subStops:[{name:'כניסה ראשית מרחוב הכרמל'},{name:'שורת הפירות והירקות — צבעונית!'},{name:'דוכני השאוורמה והמיצים הטריים'},{name:'אזור התבלינים — ריחות מהפנטים'},{name:'סמטת לוינסקי — אוכל מהעולם'},{name:'קצה — כיכר הכרמל'}]},
+      {name:'פלורנטין', walk:'12 דק׳', price:'חינם', rating:'4.4',
+       desc:'שכונת הגרפיטי של ת"א. כל קיר יצירת אמנות. בתי קפה עצמאיים וחנויות וינטג׳.',
+       mapUrl:'https://maps.google.com/?q=פלורנטין+תל+אביב',
+       subStops:[{name:'כניסה מרחוב פלורנטין'},{name:'ציור קיר ענק — וולפסון פינת אלנבי'},{name:'גלריות אמנות רחוב — 10-15'},{name:'שוק שישי — אמנים ומעצבים (שישי בלבד)'},{name:'בר הגג הסודי — שאלי מקומיים'}]},
     ],
     restaurants:[
       {name:'הנמל 24', type:'מסעדת שף', walk:'3 דק׳', rating:'4.5', price:'₪₪₪', desc:'מסעדת שף יוקרתית במתחם התחנה. ניוקי, דגים ובשרים. מומלץ להזמין מראש בסוף שבוע.', mapUrl:'https://maps.google.com/?q=הנמל+24+תל+אביב'},
@@ -533,14 +544,17 @@ const STATIONS = {
   tlv_hashalom:{name:'ת"א-השלום',badge:'עזריאלי + שדרות רוטשילד',optional:false,arrOffset:38,visitTime:90,
     nearby:[
       {name:'מגדלי עזריאלי', walk:'3 דק׳', price:'חינם / ₪25 תצפית', rating:'4.5',
-       desc:'שלושה מגדלים אייקוניים. הקניון בתחתית עם כל הרשתות. תצפית מהקומה ה-49 של המגדל הגבוה — נוף עוצר נשימה על כל תל אביב, הים והקרייה. מומלץ!',
-       mapUrl:'https://maps.google.com/?q=מגדלי+עזריאלי+תל+אביב'},
+       desc:'שלושה מגדלים אייקוניים. קניון בתחתית + תצפית מקומה 49 — נוף עוצר נשימה.',
+       mapUrl:'https://maps.google.com/?q=מגדלי+עזריאלי+תל+אביב',
+       subStops:[{name:'כניסה לקניון — קומת כניסה'},{name:'סיבוב הקניון המעגלי — הקניון הייחודי'},{name:'מגדל עגול — מעלית לתצפית קומה 49 (₪25)'},{name:'רחבת עזריאלי בחוץ — צילומים ואווירה'}]},
       {name:'שדרות רוטשילד', walk:'10 דק׳', price:'חינם', rating:'4.8',
-       desc:'הרחוב הכי יפה בישראל. שדרת עצים ענקית, פסלים, ספסלים ומסלול אופניים. בתי קפה בכל פינה. בסוף הרחוב — בית דיזנגוף, לוחמי הגטאות ועוד.',
-       mapUrl:'https://maps.google.com/?q=שדרות+רוטשילד+תל+אביב'},
-      {name:'גן מאיר',      walk:'18 דק׳', price:'חינם', rating:'4.3',
-       desc:'פארק עירוני ירוק ושקט. בריכה, גינות ואזורי ישיבה בצל. טוב לנוח ולאכול בפיקניק קטן אחרי הליכה ארוכה.',
-       mapUrl:'https://maps.google.com/?q=גן+מאיר+תל+אביב'},
+       desc:'הרחוב היפה ביותר בישראל. שדרת עצים, פסלים, ספסלים ומסלול אופניים. בתי קפה בכל פינה.',
+       mapUrl:'https://maps.google.com/?q=שדרות+רוטשילד+תל+אביב',
+       subStops:[{name:'כיכר הבימה — נקודת כניסה'},{name:'מספר 16 — בית דיזנגוף ההיסטורי'},{name:'מספר 50-70 — בתי קפה ועצי צל'},{name:'קצה — כיכר רבין וגן רבין'}]},
+      {name:'גן מאיר', walk:'18 דק׳', price:'חינם', rating:'4.3',
+       desc:'פארק עירוני ירוק ושקט עם בריכה וגינות. אידיאלי לפיקניק אחרי הליכה.',
+       mapUrl:'https://maps.google.com/?q=גן+מאיר+תל+אביב',
+       subStops:[{name:'כניסה מממול לכיכר רבין'},{name:'בריכת הנוי — מרכז הגן'},{name:'מדשאות ירוקות — לשטיח ולנוח'},{name:'פינות ישיבה בצל — שקט!'}]},
     ],
     restaurants:[
       {name:'נחמה וחצי', type:'שאוורמה מפורסמת', walk:'12 דק׳', rating:'4.5', price:'₪', desc:'מוסד תל אביבי. שאוורמה טורקית בפיתה ענקית עם ירקות טריים. תמיד תור קצר בצהריים. ₪55–65.', mapUrl:'https://maps.google.com/?q=נחמה+וחצי+תל+אביב'},
@@ -552,11 +566,13 @@ const STATIONS = {
   tlv_savidor:{name:'ת"א מרכז-סבידור',badge:'תחנה מרכזית',optional:false,arrOffset:40,visitTime:90,
     nearby:[
       {name:'שוק לוינסקי', walk:'15 דק׳', price:'חינם', rating:'4.5',
-       desc:'שוק תבלינים, מיובשים ואוכל מהעולם. ריחות מדהימים: כורכום, זעפרן, ורדים מיובשים. הסוחרים מלאי אנרגיה. חייבות לטעום שם.',
-       mapUrl:'https://maps.google.com/?q=שוק+לוינסקי+תל+אביב'},
-      {name:'שוק הפשפשים ביפו', walk:'20 דק׳ / אוטובוס', price:'חינם', rating:'4.4',
-       desc:'המקום הכי מגניב לציד וינטג׳. תכשיטים ישנים, רהיטים, בגדים, כלי מוזיקה ופסלים. גם אם לא קונות — הטיול בשוק הוא חוויה. פתוח עד 18:00.',
-       mapUrl:'https://maps.google.com/?q=שוק+הפשפשים+יפו'},
+       desc:'שוק תבלינים, מיובשים ואוכל מהעולם. ריחות מדהימים: כורכום, זעפרן, ורדים מיובשים.',
+       mapUrl:'https://maps.google.com/?q=שוק+לוינסקי+תל+אביב',
+       subStops:[{name:'כניסה מרחוב לוינסקי — ממול לסבידור'},{name:'חנות נסיך — תבלינים ובשמים'},{name:'מאפיית בוכרה — לחם טנור חם'},{name:'אגוזים ופירות מיובשים — האמצע'},{name:'קצה — מסעדות אתיופיות וטעימות'}]},
+      {name:'שוק הפשפשים', walk:'20 דק׳ / אוטובוס', price:'חינם', rating:'4.4',
+       desc:'ציד וינטג׳ — תכשיטים ישנים, רהיטים, בגדים וכלי מוזיקה. פתוח עד 18:00.',
+       mapUrl:'https://maps.google.com/?q=שוק+הפשפשים+יפו',
+       subStops:[{name:'כניסה הראשית — רחוב הפשפשים'},{name:'שוק עתיקות — ימין'},{name:'שורת תכשיטים ייחודיים'},{name:'בגדים וינטג׳ — מרכז השוק'},{name:'ריהוט ועיצוב — שמאל'},{name:'מסעדות ואוכל — קצה השוק'}]},
     ],
     restaurants:[
       {name:'שוק לוינסקי — מאכלים', type:'שוק אוכל', walk:'15 דק׳', rating:'4.5', price:'₪', desc:'בתוך השוק יש דוכנים עם מאכלים בוכרים, פרסיים ויווניים. חצילים צלויים, בורקס ומאמול. ₪20–35 למנה.', mapUrl:'https://maps.google.com/?q=שוק+לוינסקי+תל+אביב'},
@@ -567,14 +583,17 @@ const STATIONS = {
   tlv_university:{name:'ת"א-אוניברסיטה',badge:'צפון ת"א',optional:false,arrOffset:45,visitTime:90,
     nearby:[
       {name:'קניון רמת אביב', walk:'5 דק׳', price:'חינם', rating:'4.1',
-       desc:'קניון גדול ומאורגן עם כל הרשתות, בתי קפה ומסעדות. מזגן מושלם לשעות הצהריים החמות. יש מנגה, פנינגס ואיקאה בקרבת מקום.',
-       mapUrl:'https://maps.google.com/?q=קניון+רמת+אביב'},
+       desc:'קניון גדול עם כל הרשתות, בתי קפה ומסעדות. מזגן מושלם לצהריים חמים.',
+       mapUrl:'https://maps.google.com/?q=קניון+רמת+אביב',
+       subStops:[{name:'כניסה ראשית מהתחנה'},{name:'קומת קרקע — מותגים ואופנה'},{name:'קומה 1 — טכנולוגיה וספורט'},{name:'קומת מסעדות — B'},{name:'הוט סינמה — קומה 2'}]},
       {name:'מוזיאון ארץ ישראל', walk:'10 דק׳', price:'₪45', rating:'4.3',
-       desc:'קמפוס מוזיאון ענק עם פביליונים לקדרות, מטבעות, ממצאים ארכאולוגיים ומינרלים. כיפת הזכוכית מרשימה. מתאים לגילאי 10+. ~2 שעות.',
-       mapUrl:'https://maps.google.com/?q=מוזיאון+ארץ+ישראל+תל+אביב'},
+       desc:'קמפוס מוזיאון עם פביליונים לקדרות, מטבעות, ממצאים ארכאולוגיים ומינרלים. ~2 שעות.',
+       mapUrl:'https://maps.google.com/?q=מוזיאון+ארץ+ישראל+תל+אביב',
+       subStops:[{name:'כניסה — שדרת ההדסים'},{name:'פביליון הקדרות העתיקה'},{name:'מוזיאון הזכוכית — יפהפה!'},{name:'אוצרות המטבעות ההיסטוריים'},{name:'גינה ארכאולוגית בחוץ'}]},
       {name:'חוף נורדאו', walk:'20 דק׳', price:'חינם', rating:'4.2',
-       desc:'חוף עם מתקני ספורט ים, מגרש כדורסל על החול וטיילת נחמדה. פחות צפוף מחופי מרכז ת"א. תחנת אוטובוס ממש ליד.',
-       mapUrl:'https://maps.google.com/?q=חוף+נורדאו+תל+אביב'},
+       desc:'חוף עם מתקני ספורט ים ומגרש כדורסל. פחות צפוף מחופי מרכז ת"א.',
+       mapUrl:'https://maps.google.com/?q=חוף+נורדאו+תל+אביב',
+       subStops:[{name:'מגרש ספורט ים — כניסה'},{name:'מגרש כדורסל על החול'},{name:'כניסה לים — אזור שקט'},{name:'קיוסק קפה ושייקים בחוף'}]},
     ],
     restaurants:[
       {name:'מסעדות קניון רמת אביב', type:'מגוון', walk:'5 דק׳', rating:'4.0', price:'₪₪', desc:'בתוך הקניון: קפה ג׳ו, מקדונלד׳ס, נודלס בר, פיצה האט ועוד. לכל טעם וכיס.', mapUrl:'https://maps.google.com/?q=קניון+רמת+אביב'},
@@ -585,14 +604,17 @@ const STATIONS = {
   binyamina:{name:'בנימינה',badge:'עצירת ביניים אופציונלית',optional:true,arrOffset:55,visitTime:60,
     nearby:[
       {name:'שביל נחל עדה', walk:'5 דק׳', price:'חינם', rating:'4.5',
-       desc:'שביל טבע ישירות מהתחנה לאורך נחל עדה. ירוק, מוצל ומרענן גם בקיץ. אורך השביל ~3 ק"מ, חזרה באותו מסלול. מגפיים לא דרוש — נעלי ספורט מספיקות.',
-       mapUrl:'https://maps.google.com/?q=נחל+עדה+בנימינה'},
+       desc:'שביל טבע מהתחנה לאורך נחל עדה. ירוק ומוצל גם בקיץ. ~3 ק"מ, חזרה באותו מסלול.',
+       mapUrl:'https://maps.google.com/?q=נחל+עדה+בנימינה',
+       subStops:[{name:'פתח השביל — ממול לתחנה'},{name:'גשר עץ ראשון — 500 מ׳'},{name:'מפל קטן — 1 ק"מ מהכניסה'},{name:'בריכת שחייה טבעית — 1.5 ק"מ'},{name:'חזרה באותו מסלול — 30 דק׳ נוספות'}]},
       {name:'מושבת בנימינה', walk:'10 דק׳', price:'חינם', rating:'4.4',
-       desc:'מושבה ירוקה עם בתים היסטוריים מ-1922. יש שוק אמנים בסופי שבוע, בית קפה עם מאפים ביתיים וחנויות עיצוב קטנות. שקטה ונחמדת לשעה קצרה.',
-       mapUrl:'https://maps.google.com/?q=מושבת+בנימינה'},
+       desc:'מושבה ירוקה עם בתים היסטוריים מ-1922. שוק אמנים בסופי שבוע וחנויות עיצוב.',
+       mapUrl:'https://maps.google.com/?q=מושבת+בנימינה',
+       subStops:[{name:'שדרות רוטשילד — כניסה ראשית'},{name:'בית הכנסת הישן 1922'},{name:'חנויות עיצוב וקרמיקה מקומית'},{name:'קפה ינונה — ארוחת בוקר מיוחדת'},{name:'גינת הפסלים בכיכר המרכזית'}]},
       {name:'יקב זיכרון יעקב', walk:'אוטובוס 921 — 10 דק׳', price:'₪30–50', rating:'4.6',
-       desc:'יקב קרמי — אחד מהגדולים בישראל. יש סיורים עם טעימות (לרעות). לבנות — גינת היקב יפהפה, מוזיאון ומרפסת עם נוף לכרמל.',
-       mapUrl:'https://maps.google.com/?q=יקב+זיכרון+יעקב'},
+       desc:'יקב קרמי — אחד מהגדולים בישראל. סיורים עם טעימות + גינה עם נוף לכרמל.',
+       mapUrl:'https://maps.google.com/?q=יקב+זיכרון+יעקב',
+       subStops:[{name:'כניסה ראשית — שער עץ היסטורי'},{name:'גינת היקב — תצפית לים ולכרמל'},{name:'מוזיאון יין ורמי — כניסה'},{name:'אולם טעימות — 4 סוגי יין'},{name:'חנות מותג — מחירי מפעל'}]},
     ],
     restaurants:[
       {name:'קפה ינונה', type:'קפה-ארוחות בוקר', walk:'8 דק׳', rating:'4.6', price:'₪₪', desc:'ארוחות בוקר מיוחדות עד 14:00. ביצים בצורות שונות, חלות קלועות וריבות בית. אחד הכי מדורגים באזור השרון.', mapUrl:'https://maps.google.com/?q=קפה+ינונה+בנימינה'},
@@ -603,14 +625,17 @@ const STATIONS = {
   hf_bat_galim:{name:'חיפה-בת גלים',badge:'חוף + רכבל',optional:false,arrOffset:90,visitTime:120,
     nearby:[
       {name:'טיילת בת גלים', walk:'8 דק׳', price:'חינם', rating:'4.4',
-       desc:'טיילת ירוקה ומסודרת עם מדשאות, מגרשי ספורט וגישה נוחה לחוף הים. בקצה הטיילת — תחנת הרכבל. פחות עמוסה מחוף הכרמל.',
-       mapUrl:'https://maps.google.com/?q=טיילת+בת+גלים+חיפה'},
+       desc:'טיילת ירוקה עם מגרשי ספורט וגישה לחוף. בקצה — תחנת הרכבל.',
+       mapUrl:'https://maps.google.com/?q=טיילת+בת+גלים+חיפה',
+       subStops:[{name:'כניסה ממול לתחנה'},{name:'מתקני ספורט ים — ימין'},{name:'מגרש כדורגל ים'},{name:'מדשאות ופיקניק — אמצע'},{name:'קצה — תחנת הרכבל הכרמלי'}]},
       {name:'רכבל כרמל אייר', walk:'5 דק׳ לקצה הטיילת', price:'₪20–25 הלוך-חזור', rating:'4.6',
-       desc:'רכבל ייחודי בישראל — 4.5 ק"מ מבת גלים עד סטלה מאריס בראש הכרמל. נוף מהמם על מפרץ חיפה, הים והנמל. עובד בד"כ 10:00–18:00. בדקי שעות לפני!',
-       mapUrl:'https://maps.google.com/?q=כרמל+אייר+חיפה'},
+       desc:'רכבל ייחודי בישראל — 4.5 ק"מ. נוף מהמם על מפרץ חיפה. פועל ~10:00–18:00.',
+       mapUrl:'https://maps.google.com/?q=כרמל+אייר+חיפה',
+       subStops:[{name:'תחנת בת גלים — כניסה וכרטיסים'},{name:'עלייה ראשונה — נוף הנמל'},{name:'תחנת ספינקס — 2 ק"מ'},{name:'תחנת סטלה מאריס — פסגה'},{name:'מנזר הכרמל — 2 דק׳ הליכה'}]},
       {name:'מערת אליהו הנביא', walk:'15 דק׳ מהרכבל', price:'חינם', rating:'4.5',
-       desc:'מערה קדושה לשלוש דתות — יהודים, נוצרים ומוסלמים. מקום שקט ומרשים עם נוף לים. לאחר המערה — גן קטן וספסלים לנוח.',
-       mapUrl:'https://maps.google.com/?q=מערת+אליהו+הנביא+חיפה'},
+       desc:'מערה קדושה לשלוש דתות. שקט ומרשים עם נוף לים ולגן קטן.',
+       mapUrl:'https://maps.google.com/?q=מערת+אליהו+הנביא+חיפה',
+       subStops:[{name:'כניסה — שלטי ורחבת הכניסה'},{name:'האכסדרה החיצונית'},{name:'המערה הפנימית — מרשים מאוד!'},{name:'מעיין המים הקדוש'},{name:'גן נוי עם נוף פנורמי לים'}]},
     ],
     restaurants:[
       {name:'גוסטו', type:'מסעדת שף', walk:'10 דק׳', rating:'4.4', price:'₪₪', desc:'מסעדה ים תיכונית על טיילת בת גלים. פסטה, דגים ומנות עגל. אווירה מרגיעה עם נוף לים.', mapUrl:'https://maps.google.com/?q=גוסטו+חיפה'},
@@ -621,14 +646,17 @@ const STATIONS = {
   hf_shamona:{name:'חיפה מרכז השמונה',badge:'עיר תחתית',optional:false,arrOffset:95,visitTime:100,
     nearby:[
       {name:'ואדי ניסנאס', walk:'12 דק׳', price:'חינם', rating:'4.6',
-       desc:'שכונה ערבית-נוצרית קסומה עם שוק, גלריות ומסעדות. פסלים בכל פינה (מרכז הפסלים של ואדי ניסנאס). פלאפל מהמם, בקלאוה אמיתית וקפה טורקי. אחד המקומות הכי ייחודיים בישראל.',
-       mapUrl:'https://maps.google.com/?q=ואדי+ניסנאס+חיפה'},
+       desc:'שכונה ערבית-נוצרית קסומה. פסלים בכל פינה, קנאפה אמיתית וגלריות אמנות.',
+       mapUrl:'https://maps.google.com/?q=ואדי+ניסנאס+חיפה',
+       subStops:[{name:'כניסה מרחוב שמריהו לוין'},{name:'קנאפה אכבר — ₪15-20 (חם מהתנור!)'},{name:'כיכר הפסלים — תצלומים'},{name:'גלריית אל-מידאן — אמנות ערבית'},{name:'פלאפל ומסעדות ערביות'},{name:'חנויות תבלינים ובשמים'},{name:'מסגד ואדי — קצה הרחוב'}]},
       {name:'מושבה גרמנית', walk:'15 דק׳', price:'חינם', rating:'4.5',
-       desc:'שכונה שהקימו תמפלרים גרמנים ב-1868. בתים היסטוריים יפהפיים, שדרות בן גוריון עם עצי אקליפטוס ענקיים. מלמטה — נוף לגני הבהאי בטרסות (אתר UNESCO).',
-       mapUrl:'https://maps.google.com/?q=מושבה+גרמנית+חיפה'},
-      {name:'כרמלית', walk:'18 דק׳ (או קו 45)', price:'₪7', rating:'4.4',
-       desc:'הרכבת התת-קרקעית היחידה בישראל! 6 תחנות תת-קרקעיות מהעיר התחתית לראש הכרמל. רכבת היסטורית ומיוחדת. שוות לרכוב רק בשביל החוויה.',
-       mapUrl:'https://maps.google.com/?q=כרמלית+חיפה'},
+       desc:'שכונה של תמפלרים גרמנים מ-1868. בתים היסטוריים ושדרות בן גוריון המרשימה.',
+       mapUrl:'https://maps.google.com/?q=מושבה+גרמנית+חיפה',
+       subStops:[{name:'שדרות בן גוריון מספר 1 — כניסה'},{name:'בית קפה גרמני — מספר 25'},{name:'הכנסייה הגרמנית הישנה — מספר 45'},{name:'בתים היסטוריים מ-1868 — 60-80'},{name:'קצה השדרה — מבט לגני הבהאי (UNESCO)'}]},
+      {name:'כרמלית', walk:'18 דק׳ (או קו 45)', price:'₪8', rating:'4.4',
+       desc:'הרכבת התת-קרקעית היחידה בישראל! 6 תחנות מהעיר התחתית לראש הכרמל.',
+       mapUrl:'https://maps.google.com/?q=כרמלית+חיפה',
+       subStops:[{name:'תחנה תחתית — מרכז העיר'},{name:'תחנת מסדה'},{name:'תחנת הנביאים'},{name:'תחנת גולומב'},{name:'תחנת זבולון'},{name:'תחנת ראש הכרמל — עליונה'}]},
     ],
     restaurants:[
       {name:'אל-מינה', type:'מסעדה ערבית', walk:'12 דק׳', rating:'4.6', price:'₪', desc:'מסעדה ערבית אותנטית בואדי ניסנאס. חומוס, פלאפל, מוסח׳ן ולחם טנור. הכי טוב שתמצאו בחיפה. ₪30–50 לאדם.', mapUrl:'https://maps.google.com/?q=אל+מינה+חיפה'},
@@ -640,11 +668,13 @@ const STATIONS = {
   hf_mifratz:{name:'חיפה מרכזית המפרץ',badge:'רכבלית + אוניברסיטה',optional:false,arrOffset:100,visitTime:90,
     nearby:[
       {name:'רכבלית חיפה', walk:'5 דק׳', price:'₪15–20 הלוך-חזור', rating:'4.5',
-       desc:'רכבלית ייחודית 4.5 ק"מ מהמפרץ לאוניברסיטת חיפה. קפסולות זכוכית מעל גבעות הכרמל. נוף לעמק זבולון, המפרץ ובהירות — עד הגליל. פועלת ~10:00–17:00.',
-       mapUrl:'https://maps.google.com/?q=רכבלית+חיפה'},
+       desc:'רכבלית 4.5 ק"מ בקפסולות זכוכית. נוף מהמם לעמק זבולון, המפרץ והגליל.',
+       mapUrl:'https://maps.google.com/?q=רכבלית+חיפה',
+       subStops:[{name:'תחנת המפרץ — כניסה וכרטיסים'},{name:'עלייה ראשונה — נוף הנמל התעשייתי'},{name:'גבעה ראשונה — נוף הים'},{name:'גבעה שנייה — נוף הגליל'},{name:'תחנת האוניברסיטה — קצה הקו'}]},
       {name:'אוניברסיטת חיפה — תצפית', walk:'קצה הרכבלית', price:'חינם', rating:'4.6',
-       desc:'מגדל אשת ספנות בקמפוס — נוף 360° על כל הצפון. ראית חיפה, עכו, נהריה, הכרמל, הגליל ובימים בהירים — לבנון. הכניסה לקמפוס חינמית.',
-       mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה'},
+       desc:'מגדל אשת ספנות — נוף 360° על כל הצפון. בימים בהירים רואים עד לבנון!',
+       mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה',
+       subStops:[{name:'שער הכניסה לקמפוס'},{name:'ספריה מרכזית — קומת כניסה'},{name:'מגדל אשת ספנות — מעלית לקומה 30'},{name:'תצפית 360° — מרשים מאוד!'},{name:'קנטינה — קפה ואוכל זול'}]},
     ],
     restaurants:[
       {name:'קפה פורטו', type:'קפה ים', walk:'7 דק׳', rating:'4.3', price:'₪₪', desc:'בית קפה עם נוף למפרץ. ארוחות בוקר, פסטה וסלטים. מומלץ לסיים שם את היום.', mapUrl:'https://maps.google.com/?q=קפה+פורטו+חיפה'},
@@ -655,17 +685,21 @@ const STATIONS = {
   jlm_navon:{name:'ירושלים-יצחק נבון',badge:'תחנה מרכזית',optional:false,arrOffset:70,visitTime:180,
     nearby:[
       {name:'שוק מחנה יהודה', walk:'15 דק׳', price:'חינם', rating:'4.7',
-       desc:'השוק הכי חי ותוסס בישראל. 250+ דוכנים עם ירקות, בשמים, ממתקים, בשר ואוכל מוכן. חגי, מומיק ובוריקס מפורסמים. ערב שוק הפך בלילה לאזור בארים — ביום בשבילכם!',
-       mapUrl:'https://maps.google.com/?q=שוק+מחנה+יהודה+ירושלים'},
+       desc:'השוק הכי חי בישראל. 250+ דוכנים. חגי, מומיק ובוריקס — ביום בשבילכם!',
+       mapUrl:'https://maps.google.com/?q=שוק+מחנה+יהודה+ירושלים',
+       subStops:[{name:'כניסה מרחוב יפו — ראשית'},{name:'שאוורמה חגי — חובה ראשון!'},{name:'שורת הפירות הצבעונית'},{name:'מומיק — בורקס ביצה חם'},{name:'אזור התבלינים — ריחות מהמם'},{name:'אדוארדו — שפריצר בר'},{name:'בוריקס קסטנדה — מתוקים'},{name:'כניסה שנייה — רחוב אגריפס'}]},
       {name:'רחוב יפו + בן יהודה', walk:'15 דק׳', price:'חינם', rating:'4.4',
-       desc:'הרחוב הראשי של ירושלים החדשה. קניות, קפה, מסעדות ורחוב עמוס חיים. ברחוב בן יהודה — מיצגים רחוב ומוזיקאים. כיפת הכנסת ביל בטווח הליכה.',
-       mapUrl:'https://maps.google.com/?q=רחוב+יפו+ירושלים'},
+       desc:'הרחוב הראשי של ירושלים החדשה. קניות, קפה ומוזיקאים ברחוב בן יהודה.',
+       mapUrl:'https://maps.google.com/?q=רחוב+יפו+ירושלים',
+       subStops:[{name:'כיכר ספרא — נקודת הכניסה'},{name:'רחוב בן יהודה — שוק אמנויות'},{name:'גלידריית צ׳רצ׳יל — חובה!'},{name:'כיכר צה"ל — פסלים'},{name:'כלבו המרכזי — ציד מציאות'}]},
       {name:'מוזיאון המדע (Bloomfield)', walk:'20 דק׳ / אוטובוס', price:'₪55', rating:'4.5',
-       desc:'מוזיאון מדע אינטראקטיבי מרתק לנוער. ניסויים שאפשר לעשות בעצמך, כיפת מניפולציות וציוד לייזר. ~3 שעות. מומלץ להזמין כרטיסים אונליין מראש.',
-       mapUrl:'https://maps.google.com/?q=מוזיאון+המדע+ירושלים'},
-      {name:'עיר עתיקה — יפו + רובע יהודי', walk:'25 דק׳ / אוטובוס 74', price:'חינם', rating:'4.8',
-       desc:'אחד מ-7 פלאי הייחד בעולם. רחובות מחוץ לזמן, כנסיות, מסגדים, בתי כנסת וחנויות עם ספייסים. שוק ערבי בין חומות עתיקות. לא לפספס בשום מצב.',
-       mapUrl:'https://maps.google.com/?q=עיר+עתיקה+ירושלים'},
+       desc:'מוזיאון מדע אינטראקטיבי — ניסויים, לייזר וכיפת מניפולציות. מומלץ להזמין מראש.',
+       mapUrl:'https://maps.google.com/?q=מוזיאון+המדע+ירושלים',
+       subStops:[{name:'כניסה ראשית — הזמינו כרטיסים!'},{name:'פביליון הלייזר'},{name:'אולם ניסויים — 45 דק׳'},{name:'כיפת הפלנטריום'},{name:'חנות המדע לילדים'}]},
+      {name:'עיר עתיקה', walk:'25 דק׳ / אוטובוס 74', price:'חינם', rating:'4.8',
+       desc:'חומות, כנסיות, מסגדים ושוק ערבי. לא לפספס בשום מצב.',
+       mapUrl:'https://maps.google.com/?q=עיר+עתיקה+ירושלים',
+       subStops:[{name:'שער יפו — כניסה ראשית'},{name:'ויה דולורוזה — ימין'},{name:'שוק הערבי — ישר'},{name:'כנסיית הקבר — ימין'},{name:'רובע היהודי — ישר'},{name:'הכותל המערבי — קצה'},{name:'יציאה — שער האשפות'}]},
     ],
     restaurants:[
       {name:'שוק מחנה יהודה — חגי', type:'שאוורמה אגדית', walk:'15 דק׳', rating:'4.7', price:'₪', desc:'השאוורמה הכי מפורסמת בירושלים. תור ארוך אבל שווה. פיתה ענקית עם שלל תוספות. ₪55–70.', mapUrl:'https://maps.google.com/?q=שאוורמה+חגי+מחנה+יהודה'},
@@ -677,17 +711,21 @@ const STATIONS = {
   akko:{name:'עכו',badge:'עיר עתיקה UNESCO',optional:false,arrOffset:120,visitTime:180,
     nearby:[
       {name:'מנהרות הצלבנים', walk:'12 דק׳', price:'₪55', rating:'4.8',
-       desc:'מנהרות מתחת לאדמה מהתקופה הצלבנית (מאה ה-12). האורות, הפסיפסים והגדלים — מרשימים לכל גיל. ממוזג. ~90 דקות לסיור המלא. ממש חובה!',
-       mapUrl:'https://maps.google.com/?q=מנהרות+הצלבנים+עכו'},
+       desc:'מנהרות מהמאה ה-12. ממוזג, פסיפסים ואורות מרשימים. ~90 דקות. חובה!',
+       mapUrl:'https://maps.google.com/?q=מנהרות+הצלבנים+עכו',
+       subStops:[{name:'כניסה — כיכר אל-ג׳זאר'},{name:'פרוזדור הכניסה — מרשים!'},{name:'אולם האבירים הגדול'},{name:'מנהרת הבריחה — 350 מ׳'},{name:'מגדל הנמל — תצפית'},{name:'יציאה — לכיוון הנמל'}]},
       {name:'שוק עכו העתיק', walk:'10 דק׳', price:'חינם', rating:'4.5',
-       desc:'בזאר ערבי צבעוני בין חומות עתיקות. תבלינים, תכשיטים ייחודיים, בגדים רקומים וחנויות מסורתיות. האווירה שם — ממש אחרת.',
-       mapUrl:'https://maps.google.com/?q=שוק+עכו+העתיק'},
+       desc:'בזאר ערבי צבעוני בין חומות עתיקות. תבלינים, תכשיטים ובגדים רקומים.',
+       mapUrl:'https://maps.google.com/?q=שוק+עכו+העתיק',
+       subStops:[{name:'כניסה מרחוב ואיזה'},{name:'שורת הבשמים והתבלינים'},{name:'תכשיטים מסורתיים ייחודיים'},{name:'אפייה ערבית — מאמול וכנאפה'},{name:'חנויות אריגים ובדים רקומים'},{name:'קצה — מסגד אל-ג׳זאר'}]},
       {name:'נמל הדייגים', walk:'15 דק׳', price:'חינם', rating:'4.4',
-       desc:'נמל ציורי עם סירות דייגים ישנות. מסעדות דגים ממש על המים. אחרי הארוחה — ישיבה על הסלעים מול הים. שקיעה מהנמל הזה — פנומנלית.',
-       mapUrl:'https://maps.google.com/?q=נמל+הדייגים+עכו'},
-      {name:'חוף הנמל ← תחום החומות', walk:'15 דק׳', price:'חינם', rating:'4.3',
-       desc:'שחייה בין אבנים מסותתות מהתקופה הצלבנית. מים כחולים נקיים. פחות צפוף מחופים רגילים. מגיעים לשם דרך שביל לאורך החומה.',
-       mapUrl:'https://maps.google.com/?q=חוף+עכו'},
+       desc:'נמל ציורי עם סירות דייגים. מסעדות דגים על המים. שקיעה — פנומנלית.',
+       mapUrl:'https://maps.google.com/?q=נמל+הדייגים+עכו',
+       subStops:[{name:'מזח הדייגים — צפייה בסירות'},{name:'מסעדת אבו כריסטו על המים'},{name:'נקודת תצפית לחומה העות׳מאנית'},{name:'ישיבה על הסלעים — שקיעה מהממת!'}]},
+      {name:'חוף הנמל', walk:'15 דק׳', price:'חינם', rating:'4.3',
+       desc:'שחייה בין אבנים צלבניות. מים כחולים נקיים. מגיעים דרך שביל לאורך החומה.',
+       mapUrl:'https://maps.google.com/?q=חוף+עכו',
+       subStops:[{name:'ירידה בסולמות הברזל לים'},{name:'אבני הצלבנים מתחת לים'},{name:'רצועת חול קטנה — שחייה'},{name:'מצוק תצפית — לצילומים מלמעלה'}]},
     ],
     restaurants:[
       {name:'אבו כריסטו', type:'מסעדת דגים', walk:'15 דק׳', rating:'4.5', price:'₪₪', desc:'מסעדת דגים ותיקה ומפורסמת על נמל עכו. דגים טריים שנלכדו בבוקר, שרימפס ומנות ים. ₪80–150 לאדם.', mapUrl:'https://maps.google.com/?q=אבו+כריסטו+עכו'},
@@ -714,12 +752,12 @@ const EVENTS = [
 ];
 
 const PRICES_STANDALONE = {
-  ashdod:{label:'אשדוד',adultOW:11},tlv:{label:'תל אביב',adultOW:16.5},
-  netanya:{label:'נתניה',adultOW:20},jerusalem:{label:'ירושלים',adultOW:26.5},
-  haifa:{label:'חיפה',adultOW:35},akko:{label:'עכו/נהריה',adultOW:40}
+  ashdod:{label:'אשדוד',adultOW:21,dayPassA:32.5},tlv:{label:'תל אביב',adultOW:27,dayPassA:42},
+  netanya:{label:'נתניה',adultOW:27,dayPassA:42},jerusalem:{label:'ירושלים',adultOW:30.5,dayPassA:47},
+  haifa:{label:'חיפה',adultOW:30.5,dayPassA:47},akko:{label:'עכו/נהריה',adultOW:52.5,dayPassA:80.5}
 };
-const DAY_PASS_A = 99, DAY_PASS_C = 49.5;
-const BUS_RIDE_A = 5.9, BUS_RIDE_C = 2.95; // כרטיס נסיעה בודד: אוטובוס / רכבת קלה
+// מחירים על פי pti.org.il (נסיעה בודדת, תעריף מלא)
+const BUS_RIDE_A = 8, BUS_RIDE_C = 4; // נסיעה בודדת אוטובוס/רכבת קלה (אזור צהוב 0-15 ק"מ)
 
 // ═══════════════════════ STATE ═══════════════════════
 var profile = {travelers:[], address:'', station:'יבנה מזרח', extraMins:0};
@@ -1020,9 +1058,10 @@ function calcTripCost(cityKey, type) {
     var cat=priceCategory(t.age); if(cat==='free') return;
     var ow = cat==='adult' ? c.adultOW : c.adultOW*0.5;
     var extra = extraCostPerPerson(cat);
+    var dp = cat==='adult' ? c.dayPassA : c.dayPassA*0.5;
     if(type==='singles')    total += ow*2 + extra;
-    else if(type==='mixed') total += cat==='adult' ? DAY_PASS_A : ow*2 + extra;
-    else                    total += cat==='adult' ? DAY_PASS_A : DAY_PASS_C;
+    else if(type==='mixed') total += cat==='adult' ? dp : ow*2 + extra;
+    else                    total += dp;
   });
   return total;
 }
@@ -1234,11 +1273,18 @@ function generateRoute() {
     var nearby=s.nearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
       var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
+      var subHtml='';
+      if(n.subStops&&n.subStops.length){
+        subHtml='<div class="sub-stops">'+n.subStops.map(function(ss,i){
+          return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(i+1)+'. '+ss.name+'</div></div>';
+        }).join('')+'</div>';
+      }
       return '<div class="nearby-item">'
         +'<div class="ni-walk">'+n.walk+'</div>'
         +'<div class="ni-body">'
           +'<div class="ni-name">'+n.name+'</div>'
           +'<div class="ni-desc">'+n.desc+'</div>'
+          +subHtml
           +'<div class="ni-actions">'
             +'<span class="ni-price">'+n.price+'</span>'
             +(stars?'<span class="ni-rating">'+stars+'</span>':'')
@@ -1312,8 +1358,9 @@ function generateRoute() {
       var ow=cat==='adult'?city.adultOW:city.adultOW*0.5;
       var extra=cat==='adult'?extraA:extraC;
       if(type==='singles')    return t.name+': ₪'+(ow*2+extra).toFixed(0)+' (רכבת ₪'+(ow*2).toFixed(0)+(extra?' + תחב׳ ₪'+extra.toFixed(0):'')+')'  ;
-      if(type==='mixed')      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+DAY_PASS_A:'₪'+(ow*2+extra).toFixed(0)+' כרטיסים');
-      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+DAY_PASS_A:'חופשי יומי ₪'+DAY_PASS_C);
+      var dp=cat==='adult'?city.dayPassA:city.dayPassA*0.5;
+      if(type==='mixed')      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+dp:'₪'+(ow*2+extra).toFixed(0)+' כרטיסים');
+      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+dp:'חופשי יומי ₪'+dp);
     }).join('<br>');
   }
 
@@ -1360,13 +1407,13 @@ function calcStandalone() {
   var adults=parseInt(document.getElementById('sel-adults').value);
   var kids=parseInt(document.getElementById('sel-kids').value);
   if(!destKey){alert('בחרי יעד קודם');return;}
-  var p=PRICES_STANDALONE[destKey],aOW=p.adultOW,cOW=aOW*0.5;
-  var o1=adults*aOW*2+kids*cOW*2,o2=adults*DAY_PASS_A+kids*cOW*2,o3=adults*DAY_PASS_A+kids*DAY_PASS_C;
+  var p=PRICES_STANDALONE[destKey],aOW=p.adultOW,cOW=aOW*0.5,dpA=p.dayPassA,dpC=dpA*0.5;
+  var o1=adults*aOW*2+kids*cOW*2,o2=adults*dpA+kids*cOW*2,o3=adults*dpA+kids*dpC;
   var best=Math.min(o1,o2,o3);
   var opts=[
     {name:'כרטיסים בודדים',brk:adults+'×₪'+(aOW*2).toFixed(0)+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o1},
-    {name:'חופשי למבוגרים + כרטיסים לילדים',brk:adults+'×₪'+DAY_PASS_A+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o2},
-    {name:'חופשי יומי לכולם',brk:adults+'×₪'+DAY_PASS_A+' + '+kids+'×₪'+DAY_PASS_C,total:o3}
+    {name:'חופשי למבוגרים + כרטיסים לילדים',brk:adults+'×₪'+dpA+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o2},
+    {name:'חופשי יומי לכולם',brk:adults+'×₪'+dpA+' + '+kids+'×₪'+dpC,total:o3}
   ];
   document.getElementById('calc-result').innerHTML=
     '<div class="result-wrap"><div class="result-head">ל'+p.label+' ('+adults+' מבוגר + '+kids+' ילדים):</div>'
