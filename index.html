@@ -1073,83 +1073,92 @@ function minsToStr(m) { var h=Math.floor(m/60)%24,mn=m%60; return(h<10?'0':'')+h
 
 function parseWalkMins(w) { var m=w.match(/(\d+)/); return m?parseInt(m[1]):99; }
 
-function buildScheduleHtml(s, arrMins) {
-  var t = arrMins;
+function buildScheduleHtml(s, startTime, state) {
+  state = state || {hadCoffee:false, hadLunch:false};
+  var hadCoffee = state.hadCoffee;
+  var hadLunch  = state.hadLunch;
+  var t = startTime;
   var items = [];
+
   function add(type, label, duration, opts) {
     opts = opts||{};
-    items.push({type:type,time:t,label:label,duration:duration,
-      detail:opts.detail||'',walk:opts.walk||'',price:opts.price||'',
-      rating:opts.rating||'',mapUrl:opts.mapUrl||''});
+    items.push({type:type, time:t, label:label, duration:duration,
+      detail:opts.detail||'', walk:opts.walk||'', price:opts.price||'',
+      rating:opts.rating||'', mapUrl:opts.mapUrl||''});
     t += duration;
   }
+
   var attrs = [].concat(s.nearby).sort(function(a,b){ return parseWalkMins(a.walk)-parseWalkMins(b.walk); });
   var rests = s.restaurants||[];
 
-  add('arrive','הגעה ל-'+s.name,0);
+  // מיון: בתי קפה vs מסעדות
+  function isCafe(r){ return (r.type+r.name).indexOf('קפה') !== -1 || r.type.indexOf('בוקר') !== -1; }
+  var cafeList  = rests.filter(isCafe);
+  var restList  = rests.filter(function(r){ return !isCafe(r); });
+  var lunchRest = restList.length ? restList[0] : (rests.length ? rests[rests.length-1] : null);
 
-  var hadCoffee=false, hadLunch=false;
+  // נקודת ביניים להכנסת צהריים: אחרי האטרקציה האמצעית
+  var lunchAfterIdx = Math.max(0, Math.floor(attrs.length / 2) - 1);
 
-  // קפה בוקר לפני 11:00
-  if (t < 660 && rests.length > 0) {
-    var cafe = rests[0];
-    t += parseWalkMins(cafe.walk);
-    add('coffee', cafe.name, 30, {detail:'☕ הפסקת קפה בוקר', walk:cafe.walk, rating:cafe.rating, mapUrl:cafe.mapUrl});
+  add('arrive', 'הגעה ל-'+s.name, 0);
+
+  // קפה בוקר — רק אם לפני 11:00 ועוד לא היה
+  if (!hadCoffee && t < 660) {
+    var cafe = cafeList.length ? cafeList[0] : null;
+    if (cafe) {
+      t += parseWalkMins(cafe.walk);
+      add('coffee', cafe.name, 30, {detail:'☕ ארוחת בוקר', walk:cafe.walk, rating:cafe.rating, mapUrl:cafe.mapUrl});
+    } else {
+      add('coffee', '☕ הפסקת קפה', 20, {detail:'מצאי בית קפה קרוב לתחנה'});
+    }
     hadCoffee = true;
   }
 
   attrs.forEach(function(attr, i) {
-    // הפסקת צהריים — מ-12:00
-    if (!hadLunch && t >= 720) {
-      var li = hadCoffee ? Math.min(1, rests.length-1) : 0;
-      var lr = rests[li];
-      if (lr) {
-        t += parseWalkMins(lr.walk);
-        add('lunch', lr.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lr.walk, rating:lr.rating, mapUrl:lr.mapUrl});
-        hadLunch = true;
-      }
+    // צהריים — אחרי האטרקציה האמצעית (ובתנאי שמעל 11:00) או כשמגיעים ל-12:30
+    if (!hadLunch && lunchRest && (i === lunchAfterIdx + 1 && t >= 660 || t >= 750)) {
+      t += parseWalkMins(lunchRest.walk);
+      add('lunch', lunchRest.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lunchRest.walk, rating:lunchRest.rating, mapUrl:lunchRest.mapUrl});
+      hadLunch = true;
     }
-    // הליכה לאטרקציה
     var walkTo = i===0 ? parseWalkMins(attr.walk) : 8;
     t += walkTo;
-    var shortDesc = attr.desc ? attr.desc.substring(0,70)+(attr.desc.length>70?'…':'') : '';
+    var shortDesc = attr.desc ? attr.desc.substring(0,65)+(attr.desc.length>65?'…':'') : '';
     add('attraction', attr.name, 30, {
-      detail: shortDesc, walk: i===0?attr.walk:'~8 דק׳ מהקודם',
+      detail: shortDesc,
+      walk: i===0 ? attr.walk : '~8 דק׳ מהקודם',
       price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl
     });
   });
 
-  // צהריים אם עוד לא היו
-  if (!hadLunch && rests.length > 0) {
-    var li2 = hadCoffee ? Math.min(1, rests.length-1) : 0;
-    var lr2 = rests[li2];
-    if (lr2) {
-      t += parseWalkMins(lr2.walk);
-      add('lunch', lr2.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lr2.walk, rating:lr2.rating, mapUrl:lr2.mapUrl});
-    }
+  // צהריים בסוף אם עוד לא היו
+  if (!hadLunch && lunchRest) {
+    t += parseWalkMins(lunchRest.walk);
+    add('lunch', lunchRest.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lunchRest.walk, rating:lunchRest.rating, mapUrl:lunchRest.mapUrl});
+    hadLunch = true;
   }
 
-  // חזרה לתחנה
-  var lastW = attrs.length ? parseWalkMins(attrs[attrs.length-1].walk) : 5;
+  // חזרה לתחנה — הליכה בחזרה
+  var lastW = attrs.length ? Math.min(parseWalkMins(attrs[0].walk) + 3, 15) : 5;
   t += lastW;
-  add('return','חזרה לתחנה', 0);
+  add('return', 'חזרה לתחנה 🚉', 0);
 
-  // צבעים לפי סוג
   var conf = {
-    arrive:    {dot:'🚉', color:'var(--navy)',  bg:'#e8eaf6'},
-    coffee:    {dot:'☕', color:'#92400e',      bg:'#fffbeb'},
-    attraction:{dot:'📍', color:'#1d4ed8',     bg:'#eff6ff'},
-    lunch:     {dot:'🍽️', color:'#166534',     bg:'#f0fdf4'},
-    return:    {dot:'🚉', color:'var(--navy)',  bg:'#e8eaf6'},
+    arrive:    {dot:'🚉', color:'var(--navy)', bg:'#e8eaf6'},
+    coffee:    {dot:'☕', color:'#92400e',     bg:'#fffbeb'},
+    attraction:{dot:'📍', color:'#1d4ed8',    bg:'#eff6ff'},
+    lunch:     {dot:'🍽️', color:'#166534',    bg:'#f0fdf4'},
+    return:    {dot:'🏁', color:'var(--navy)', bg:'#e8eaf6'},
   };
 
-  var html='<div class="sched-section"><div class="sched-title">🗓️ לוח זמנים מוצע ליום</div>';
+  var stationNum = s.name;
+  var html='<div class="sched-section"><div class="sched-title">🗓️ לוח זמנים — '+stationNum+'</div>';
   items.forEach(function(item, i) {
     var c = conf[item.type]||conf.attraction;
     var timeStr = minsToStr(item.time);
-    var endStr  = item.duration>0 ? '–'+minsToStr(item.time+item.duration) : '';
+    var endStr  = item.duration > 0 ? ' – '+minsToStr(item.time+item.duration) : '';
     html += '<div class="sched-item" style="--sched-color:'+c.color+';--sched-bg:'+c.bg+';">';
-    html += '<div class="sched-time">'+timeStr+'<br><span style="font-weight:400;font-size:.55rem;color:var(--muted)">'+endStr+'</span></div>';
+    html += '<div class="sched-time">'+timeStr+'<br><span style="font-weight:400;font-size:.54rem;color:var(--muted);">'+endStr+'</span></div>';
     html += '<div class="sched-line"><div class="sched-dot">'+c.dot+'</div>'+(i<items.length-1?'<div class="sched-vline"></div>':'')+'</div>';
     html += '<div class="sched-body">';
     html += '<div class="sched-label">'+item.label+'</div>';
@@ -1162,7 +1171,7 @@ function buildScheduleHtml(s, arrMins) {
     html+='</div></div></div>';
   });
   html+='</div>';
-  return {html: html, endTime: t};
+  return {html: html, endTime: t, hadCoffee: hadCoffee, hadLunch: hadLunch};
 }
 
 function generateRoute() {
@@ -1200,26 +1209,26 @@ function generateRoute() {
   var firstOffset = STATIONS[stids[0]].arrOffset || 0;
   var prevStationEndTime = -1;
   var prevSid = null;
+  var dayState = {hadCoffee: false, hadLunch: false}; // state משותף לכל היום
 
   html+=stids.map(function(sid,idx){
     var s=STATIONS[sid];
-    // זמן הגעת הרכבת לתחנה זו
     var trainArrMins = depMinsGlobal + (city.travelMins + (profile.extraMins||0)) + (s.arrOffset - firstOffset);
 
-    // startTime: אם יש תחנה קודמת — המשיך מסיומה + נסיעה בין תחנות
     var startTime;
     if (idx === 0 || prevStationEndTime < 0) {
       startTime = trainArrMins;
     } else {
-      var interMins = (s.arrOffset - STATIONS[prevSid].arrOffset) + 5; // נסיעה + המתנה
+      var interMins = (STATIONS[sid].arrOffset - STATIONS[prevSid].arrOffset) + 5;
       startTime = Math.max(trainArrMins, prevStationEndTime + interMins);
     }
 
-    var schedResult = buildScheduleHtml(s, startTime);
+    var schedResult = buildScheduleHtml(s, startTime, dayState);
     prevStationEndTime = schedResult.endTime;
     prevSid = sid;
+    dayState = {hadCoffee: schedResult.hadCoffee, hadLunch: schedResult.hadLunch};
 
-    var arrMins = startTime; // לכותרת התחנה
+    var arrMins = startTime;
     var walkRouteHtml = schedResult.html;
 
     var nearby=s.nearby.map(function(n){
