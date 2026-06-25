@@ -218,6 +218,23 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .rest-map{font-size:.6rem;background:#16a34a;color:#fff;border-radius:10px;padding:2px 7px;text-decoration:none;font-weight:700;flex-shrink:0;}
 .rest-map:hover{background:#14532d;}
 
+.sched-section{background:#fafafa;border-top:2px solid var(--gold);padding:12px 13px 6px;}
+.sched-title{font-size:.78rem;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.sched-item{display:flex;gap:0;align-items:flex-start;min-height:36px;}
+.sched-time{font-size:.64rem;font-weight:800;color:var(--navy);width:70px;flex-shrink:0;padding-top:5px;text-align:left;direction:ltr;}
+.sched-line{display:flex;flex-direction:column;align-items:center;width:26px;flex-shrink:0;}
+.sched-dot{width:26px;height:26px;border-radius:50%;background:var(--sched-bg,#e8eaf6);border:2px solid var(--sched-color,var(--navy));display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;}
+.sched-vline{width:2px;background:#e5e7eb;flex:1;min-height:14px;}
+.sched-body{flex:1;padding:3px 0 10px 10px;}
+.sched-label{font-size:.78rem;font-weight:700;color:var(--sched-color,var(--navy));}
+.sched-walk{font-size:.62rem;color:var(--muted);margin-top:1px;}
+.sched-detail{font-size:.65rem;color:#374151;margin-top:2px;line-height:1.35;}
+.sched-meta{display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap;}
+.sched-price{font-size:.62rem;color:var(--green);font-weight:700;}
+.sched-rating{font-size:.62rem;color:#f59e0b;font-weight:700;}
+.sched-map{font-size:.6rem;background:var(--navy);color:#fff;border-radius:10px;padding:2px 7px;text-decoration:none;font-weight:700;}
+.sched-map:hover{background:var(--gold);color:var(--navy);}
+
 .lr-section{background:#f5f3ff;border-top:1px solid #ddd6fe;padding:10px 13px;}
 .lr-head{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
 .lr-ico{width:20px;height:20px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;font-weight:800;flex-shrink:0;}
@@ -1020,6 +1037,100 @@ function updateCostPreview() {
 // ═══════════════════════ GENERATE ROUTE ═══════════════════════
 function minsToStr(m) { var h=Math.floor(m/60)%24,mn=m%60; return(h<10?'0':'')+h+':'+(mn<10?'0':'')+mn; }
 
+function parseWalkMins(w) { var m=w.match(/(\d+)/); return m?parseInt(m[1]):99; }
+
+function buildScheduleHtml(s, arrMins) {
+  var t = arrMins;
+  var items = [];
+  function add(type, label, duration, opts) {
+    opts = opts||{};
+    items.push({type:type,time:t,label:label,duration:duration,
+      detail:opts.detail||'',walk:opts.walk||'',price:opts.price||'',
+      rating:opts.rating||'',mapUrl:opts.mapUrl||''});
+    t += duration;
+  }
+  var attrs = [].concat(s.nearby).sort(function(a,b){ return parseWalkMins(a.walk)-parseWalkMins(b.walk); });
+  var rests = s.restaurants||[];
+
+  add('arrive','הגעה ל-'+s.name,0);
+
+  var hadCoffee=false, hadLunch=false;
+
+  // קפה בוקר לפני 11:00
+  if (t < 660 && rests.length > 0) {
+    var cafe = rests[0];
+    t += parseWalkMins(cafe.walk);
+    add('coffee', cafe.name, 30, {detail:'☕ הפסקת קפה בוקר', walk:cafe.walk, rating:cafe.rating, mapUrl:cafe.mapUrl});
+    hadCoffee = true;
+  }
+
+  attrs.forEach(function(attr, i) {
+    // הפסקת צהריים — מ-12:00
+    if (!hadLunch && t >= 720) {
+      var li = hadCoffee ? Math.min(1, rests.length-1) : 0;
+      var lr = rests[li];
+      if (lr) {
+        t += parseWalkMins(lr.walk);
+        add('lunch', lr.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lr.walk, rating:lr.rating, mapUrl:lr.mapUrl});
+        hadLunch = true;
+      }
+    }
+    // הליכה לאטרקציה
+    var walkTo = i===0 ? parseWalkMins(attr.walk) : 8;
+    t += walkTo;
+    var shortDesc = attr.desc ? attr.desc.substring(0,70)+(attr.desc.length>70?'…':'') : '';
+    add('attraction', attr.name, 30, {
+      detail: shortDesc, walk: i===0?attr.walk:'~8 דק׳ מהקודם',
+      price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl
+    });
+  });
+
+  // צהריים אם עוד לא היו
+  if (!hadLunch && rests.length > 0) {
+    var li2 = hadCoffee ? Math.min(1, rests.length-1) : 0;
+    var lr2 = rests[li2];
+    if (lr2) {
+      t += parseWalkMins(lr2.walk);
+      add('lunch', lr2.name, 50, {detail:'🍽️ הפסקת צהריים', walk:lr2.walk, rating:lr2.rating, mapUrl:lr2.mapUrl});
+    }
+  }
+
+  // חזרה לתחנה
+  var lastW = attrs.length ? parseWalkMins(attrs[attrs.length-1].walk) : 5;
+  t += lastW;
+  add('return','חזרה לתחנה', 0);
+
+  // צבעים לפי סוג
+  var conf = {
+    arrive:    {dot:'🚉', color:'var(--navy)',  bg:'#e8eaf6'},
+    coffee:    {dot:'☕', color:'#92400e',      bg:'#fffbeb'},
+    attraction:{dot:'📍', color:'#1d4ed8',     bg:'#eff6ff'},
+    lunch:     {dot:'🍽️', color:'#166534',     bg:'#f0fdf4'},
+    return:    {dot:'🚉', color:'var(--navy)',  bg:'#e8eaf6'},
+  };
+
+  var html='<div class="sched-section"><div class="sched-title">🗓️ לוח זמנים מוצע ליום</div>';
+  items.forEach(function(item, i) {
+    var c = conf[item.type]||conf.attraction;
+    var timeStr = minsToStr(item.time);
+    var endStr  = item.duration>0 ? '–'+minsToStr(item.time+item.duration) : '';
+    html += '<div class="sched-item" style="--sched-color:'+c.color+';--sched-bg:'+c.bg+';">';
+    html += '<div class="sched-time">'+timeStr+'<br><span style="font-weight:400;font-size:.55rem;color:var(--muted)">'+endStr+'</span></div>';
+    html += '<div class="sched-line"><div class="sched-dot">'+c.dot+'</div>'+(i<items.length-1?'<div class="sched-vline"></div>':'')+'</div>';
+    html += '<div class="sched-body">';
+    html += '<div class="sched-label">'+item.label+'</div>';
+    if(item.walk) html+='<div class="sched-walk">🚶 '+item.walk+'</div>';
+    if(item.detail) html+='<div class="sched-detail">'+item.detail+'</div>';
+    html+='<div class="sched-meta">';
+    if(item.price) html+='<span class="sched-price">'+item.price+'</span>';
+    if(item.rating) html+='<span class="sched-rating">⭐ '+item.rating+'</span>';
+    if(item.mapUrl) html+='<a class="sched-map" href="'+item.mapUrl+'" target="_blank">📍 מפה</a>';
+    html+='</div></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
 function generateRoute() {
   if(!selectedCity) return;
   var city=CITIES[selectedCity];
@@ -1055,23 +1166,7 @@ function generateRoute() {
   html+=stids.map(function(sid,idx){
     var s=STATIONS[sid];
     var arrMins=depMinsGlobal+(city.travelMins+(profile.extraMins||0))+(s.arrOffset-CITIES[selectedCity].stations.map(function(x){return STATIONS[x].arrOffset||0;})[0]);
-    // Build walking route
-    function parseWalkMins(w){
-      var m=w.match(/(\d+)/);
-      return m?parseInt(m[1]):99;
-    }
-    var sorted=[].concat(s.nearby).sort(function(a,b){return parseWalkMins(a.walk)-parseWalkMins(b.walk);});
-    var wrNodes='<div class="wr-node"><div class="wr-dot gold">🚉</div><div class="wr-label">תחנה</div></div>';
-    var prevMins=0;
-    sorted.forEach(function(n,i){
-      var cur=parseWalkMins(n.walk);
-      var diff=cur-prevMins; prevMins=cur;
-      var diffTxt=diff<=0?n.walk:diff+' דק׳';
-      var shortName=n.name.length>8?n.name.substring(0,7)+'…':n.name;
-      wrNodes+='<div class="wr-arrow"><div class="wr-line"></div><div class="wr-time">'+diffTxt+'</div></div>'
-        +'<div class="wr-node"><div class="wr-dot">'+(i+1)+'</div><div class="wr-label">'+shortName+'</div></div>';
-    });
-    var walkRouteHtml='<div class="walk-route"><div class="wr-title">🗺️ מסלול הליכה מהתחנה</div><div class="wr-flow">'+wrNodes+'</div></div>';
+    var walkRouteHtml = buildScheduleHtml(s, arrMins);
 
     var nearby=s.nearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
