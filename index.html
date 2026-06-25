@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>טיול ברכבת 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a1a2e;--navy2:#0f1729;
+  --gold:#e8b84b;--gold2:#f5d47a;
+  --bg:#f4f1ec;--card:#fff;--text:#1a1a2e;--muted:#8a8a9a;
+  --border:#e8e4dc;--green:#27ae60;
+  --warn:#e74c3c;--warn-bg:#fff3f3;
+  --indigo:#4F46E5;--orange:#F97316;
+  --purple:#7c3aed;--teal:#0891b2;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:18px;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+/* ── ONBOARDING ── */
+.ob-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#1a1a2e 0%,#0d1226 60%,#1a1a2e 100%);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.ob-overlay.hidden{display:none;}
+.ob-card{background:#fff;border-radius:20px;padding:26px 20px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);margin:auto;}
+.ob-icon{font-size:2.8rem;text-align:center;margin-bottom:8px;}
+.ob-title{font-family:'Frank Ruhl Libre',serif;font-size:1.6rem;font-weight:900;color:var(--navy);text-align:center;line-height:1.2;}
+.ob-sub{font-size:.82rem;color:var(--muted);text-align:center;margin:5px 0 20px;line-height:1.5;}
+.ob-travelers{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.ob-row{display:flex;gap:7px;align-items:center;}
+.ob-inp{padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:.88rem;color:var(--text);transition:border-color .2s;min-height:44px;}
+.ob-inp:focus{outline:none;border-color:var(--indigo);}
+.ob-inp.nm{flex:1;}
+.ob-inp.ag{width:68px;text-align:center;}
+.ob-inp.full{width:100%;}
+.ob-del{background:none;border:none;font-size:1.1rem;color:var(--warn);cursor:pointer;padding:8px;min-height:44px;min-width:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background .15s;}
+.ob-del:hover{background:var(--warn-bg);}
+.ob-add{background:none;border:2px dashed var(--border);color:var(--indigo);font-family:'Heebo',sans-serif;font-weight:700;font-size:.83rem;padding:10px;border-radius:10px;cursor:pointer;width:100%;min-height:44px;transition:border-color .2s,background .2s;}
+.ob-add:hover{border-color:var(--indigo);background:#eef2ff;}
+.ob-lbl{font-size:.76rem;font-weight:700;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;display:block;}
+.ob-group{margin-top:12px;}
+.ob-station-detect{font-size:.74rem;color:var(--green);margin-top:4px;min-height:18px;}
+.ob-go{background:linear-gradient(135deg,var(--navy),var(--navy2));color:var(--gold);border:none;font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;font-weight:700;padding:14px;border-radius:12px;width:100%;cursor:pointer;margin-top:16px;min-height:48px;letter-spacing:.3px;box-shadow:0 4px 14px rgba(0,0,0,.2);transition:opacity .15s;}
+.ob-go:active{opacity:.85;}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(150deg,#1a1a2e 0%,#0d1226 100%);padding:14px 16px 12px;position:relative;overflow:hidden;}
+.hdr::after{content:'';position:absolute;bottom:-40px;left:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(232,184,75,.08) 0%,transparent 70%);pointer-events:none;}
+.hdr-row{display:flex;align-items:center;gap:10px;justify-content:space-between;}
+.hdr-left{display:flex;align-items:center;gap:10px;}
+.hdr-icon{font-size:1.8rem;line-height:1;}
+.hdr-title{font-family:'Frank Ruhl Libre',serif;font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:-.3px;line-height:1.1;}
+.hdr-title em{color:var(--gold);font-style:normal;}
+.profile-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(232,184,75,.2);border-radius:30px;padding:6px 11px;cursor:pointer;transition:background .15s;min-height:40px;max-width:200px;}
+.profile-chip:hover{background:rgba(255,255,255,.12);}
+.profile-names{font-size:.7rem;color:rgba(255,255,255,.75);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.profile-edit{font-size:.72rem;color:var(--gold);flex-shrink:0;}
+
+/* ── TABS ── */
+.tabs{background:var(--navy);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:0;z-index:200;border-bottom:2px solid rgba(232,184,75,.15);}
+.tabs::-webkit-scrollbar{display:none;}
+.tb{flex-shrink:0;padding:12px 14px;background:none;border:none;border-bottom:2.5px solid transparent;margin-bottom:-2px;color:rgba(255,255,255,.4);font-family:'Heebo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.3px;transition:color .2s,border-color .2s;min-height:44px;}
+.tb:hover{color:rgba(255,255,255,.7);}
+.tb.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── TAB CONTENT ── */
+.tc{display:none;}
+.tc.active{display:block;}
+.dbody{padding:14px;}
+.sec-banner{background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;gap:12px;padding:13px 17px;}
+.sec-icon{font-size:2rem;}
+.sec-title{font-size:.95rem;font-weight:700;color:#fff;}
+.sec-sub{font-size:.71rem;color:rgba(255,255,255,.45);margin-top:2px;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.07);border:1px solid var(--border);}
+.card.warn{border-color:rgba(231,76,60,.35);background:var(--warn-bg);}
+.cin{padding:13px 14px;display:flex;gap:10px;align-items:flex-start;}
+.cn{width:28px;height:28px;background:var(--gold);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;margin-top:2px;font-family:'Frank Ruhl Libre',serif;}
+.cico{font-size:1.4rem;min-width:28px;text-align:center;flex-shrink:0;}
+.cbody{flex:1;min-width:0;}
+.ctime{font-size:.7rem;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:1px;}
+.cname{font-size:.95rem;font-weight:800;color:var(--navy);line-height:1.2;}
+.cdesc{font-size:.82rem;color:#555;margin-top:3px;line-height:1.5;}
+.cmeta{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.badge{display:inline-block;padding:3px 9px;border-radius:16px;font-size:.68rem;font-weight:800;letter-spacing:.2px;}
+.badge-green{background:#d1fae5;color:#065f46;}
+.badge-gold{background:#fef9c3;color:#854d0e;}
+.badge-blue{background:#dbeafe;color:#1e40af;}
+.badge-purple{background:#ede9fe;color:#5b21b6;}
+.badge-orange{background:#ffedd5;color:#9a3412;}
+.badge-red{background:#fee2e2;color:#9f1239;}
+
+/* ── NOTES ── */
+.note{background:#fffbf0;border-right:3px solid var(--gold);border-radius:8px;padding:10px 13px;font-size:.82rem;color:#7a5c00;margin-bottom:10px;line-height:1.55;}
+.note.red{background:var(--warn-bg);border-right-color:var(--warn);color:#9f1239;}
+.note.green{background:#f0fdf4;border-right-color:var(--green);color:#14532d;}
+.note.indigo{background:#eef2ff;border-right-color:var(--indigo);color:#3730a3;}
+.note.purple{background:#f5f3ff;border-right-color:var(--purple);color:#4c1d95;}
+.slabel{font-size:.67rem;font-weight:800;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin:16px 0 8px;}
+
+/* ── CITY GRID ── */
+.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.city-btn{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;transition:border-color .2s,background .2s,transform .1s;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.city-btn:hover{border-color:var(--gold);background:#fffbf0;}
+.city-btn.active{border-color:var(--gold);background:#fffbf0;box-shadow:0 0 0 3px rgba(232,184,75,.15);}
+.city-btn.disabled-city{opacity:.4;pointer-events:none;}
+.city-btn:active{transform:scale(.97);}
+.city-emoji{font-size:1.6rem;}
+.city-name{font-size:.85rem;font-weight:800;color:var(--navy);}
+.city-meta{font-size:.64rem;color:var(--muted);}
+.city-price{font-size:.68rem;font-weight:700;color:var(--green);}
+.city-fit-badge{font-size:.62rem;font-weight:700;background:#d1fae5;color:#065f46;border-radius:6px;padding:1px 5px;margin-top:1px;}
+.city-nofit-badge{font-size:.62rem;font-weight:700;background:#fee2e2;color:#9f1239;border-radius:6px;padding:1px 5px;margin-top:1px;}
+
+/* ── BUILDER SECTIONS ── */
+.builder-section{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--border);}
+.bs-title{font-size:.88rem;font-weight:800;color:var(--navy);margin-bottom:11px;display:flex;align-items:center;gap:7px;}
+
+/* Time window */
+.time-row{display:flex;gap:8px;align-items:flex-end;}
+.time-group{flex:1;}
+.time-lbl{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:4px;display:block;}
+.time-sel{padding:10px 10px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:.88rem;direction:rtl;background:#fff;width:100%;cursor:pointer;color:var(--text);min-height:44px;transition:border-color .2s;}
+.time-sel:focus{outline:none;border-color:var(--gold);}
+.time-avail{background:linear-gradient(135deg,var(--green),#059669);color:#fff;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:700;margin-top:8px;display:none;}
+.time-avail.show{display:block;}
+.time-warn{background:var(--warn-bg);border-right:3px solid var(--warn);color:#9f1239;border-radius:8px;padding:8px 12px;font-size:.76rem;margin-top:6px;display:none;}
+.time-warn.show{display:block;}
+
+/* Stations */
+.sta-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:2px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;position:relative;}
+.sta-item:hover{border-color:var(--gold);background:#fffbf0;}
+.sta-item.checked{border-color:var(--gold);background:#fffbf0;}
+.sta-item.optional-stop{border-style:dashed;}
+.sta-item.too-long{opacity:.5;}
+.sta-cb{width:20px;height:20px;accent-color:var(--navy);flex-shrink:0;margin-top:2px;cursor:pointer;}
+.sta-name{font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.2;}
+.sta-badge{font-size:.63rem;color:var(--muted);margin-top:1px;}
+.sta-count{font-size:.68rem;color:var(--green);margin-top:1px;}
+.sta-time{font-size:.65rem;font-weight:700;color:var(--orange);margin-top:1px;}
+.sta-opt-label{position:absolute;left:9px;top:9px;font-size:.6rem;background:var(--border);color:var(--muted);padding:2px 6px;border-radius:4px;font-weight:700;}
+
+/* Transport */
+.transport-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.trans-btn{border:2px solid var(--border);background:var(--card);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .18s;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.trans-btn:hover{border-color:var(--gold);}
+.trans-btn.active.lr-mode{border-color:var(--purple);background:#f5f3ff;}
+.trans-btn.active.bus-mode{border-color:var(--orange);background:#fff7ed;}
+.trans-btn[disabled]{opacity:.35;cursor:not-allowed;}
+.trans-icon{font-size:1.4rem;}
+.trans-name{font-size:.78rem;font-weight:700;color:var(--navy);}
+.trans-desc{font-size:.64rem;color:var(--muted);}
+
+/* Cost preview */
+.cost-preview{background:linear-gradient(135deg,#1a1a2e,#0f1729);border-radius:12px;padding:13px;margin:10px 0;}
+.cp-title{font-size:.7rem;color:var(--gold);font-weight:700;letter-spacing:.8px;margin-bottom:7px;}
+.cp-row{display:flex;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,.65);margin-bottom:3px;}
+.cp-total{display:flex;justify-content:space-between;font-size:.92rem;font-weight:800;color:#fff;border-top:1px solid rgba(255,255,255,.15);margin-top:7px;padding-top:7px;}
+.cp-pass{font-size:.7rem;color:var(--gold);margin-top:4px;line-height:1.4;}
+
+.gen-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;font-family:'Frank Ruhl Libre',serif;font-size:1.05rem;font-weight:900;padding:14px;border-radius:12px;width:100%;cursor:pointer;margin-top:10px;min-height:50px;box-shadow:0 4px 14px rgba(232,184,75,.3);transition:transform .1s,opacity .15s;}
+.gen-btn:active{transform:scale(.98);opacity:.9;}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Generated route */
+.gen-header{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:14px;padding:15px;margin-bottom:10px;color:#fff;}
+.gen-h-title{font-family:'Frank Ruhl Libre',serif;font-size:1.25rem;font-weight:900;color:var(--gold);}
+.gen-h-meta{font-size:.76rem;color:rgba(255,255,255,.55);margin-top:3px;}
+.gen-h-note{font-size:.77rem;color:rgba(255,255,255,.85);margin-top:8px;padding:8px;background:rgba(255,255,255,.07);border-radius:8px;line-height:1.5;}
+.gen-h-window{font-size:.78rem;color:var(--gold);margin-top:5px;padding:6px 8px;background:rgba(232,184,75,.1);border-radius:6px;}
+
+.sta-card{background:var(--card);border-radius:14px;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.sta-head{padding:12px 13px;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--border);}
+.sta-num{width:27px;height:27px;background:var(--gold);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem;flex-shrink:0;margin-top:1px;}
+.sta-body{flex:1;}
+.sta-title-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.sta-title{font-size:.93rem;font-weight:800;color:var(--navy);}
+.sta-arr{font-size:.7rem;color:var(--gold);font-weight:700;}
+
+.nearby-list{padding:9px 13px;}
+.nearby-item{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.nearby-item:last-child{border-bottom:none;}
+.ni-walk{font-size:.64rem;font-weight:700;color:var(--gold);background:#fffbf0;border-radius:4px;padding:2px 6px;flex-shrink:0;margin-top:2px;white-space:nowrap;}
+.ni-body{flex:1;}
+.ni-name{font-size:.82rem;font-weight:700;color:var(--navy);}
+.ni-desc{font-size:.7rem;color:var(--muted);margin-top:1px;line-height:1.35;}
+.ni-price{font-size:.68rem;color:var(--green);font-weight:700;margin-top:1px;}
+.ni-actions{display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap;}
+.ni-rating{font-size:.65rem;color:#f59e0b;font-weight:700;}
+.ni-map-btn{font-size:.62rem;background:var(--navy);color:#fff;border-radius:10px;padding:2px 8px;text-decoration:none;font-weight:700;}
+.ni-map-btn:hover{background:var(--gold);color:var(--navy);}
+
+.walk-route{background:linear-gradient(135deg,#fffbf0,#fff8e7);border-top:2px solid var(--gold);padding:10px 13px 8px;}
+.wr-title{font-size:.72rem;font-weight:800;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.wr-flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;row-gap:6px;}
+.wr-node{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.wr-dot{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
+.wr-dot.gold{background:var(--gold);color:var(--navy);}
+.wr-label{font-size:.58rem;font-weight:700;color:var(--navy);text-align:center;max-width:56px;line-height:1.2;}
+.wr-arrow{display:flex;flex-direction:column;align-items:center;gap:0;padding:0 2px;padding-bottom:14px;}
+.wr-line{width:22px;height:2px;background:var(--gold);}
+.wr-time{font-size:.52rem;color:var(--gold);font-weight:700;white-space:nowrap;margin-top:2px;}
+
+.rest-section{background:#f0fdf4;border-top:2px solid #bbf7d0;padding:10px 13px;}
+.rest-head{font-size:.8rem;font-weight:800;color:#166534;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.rest-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #dcfce7;align-items:flex-start;}
+.rest-item:last-child{border-bottom:none;}
+.rest-walk{font-size:.62rem;font-weight:700;color:#16a34a;background:#dcfce7;border-radius:4px;padding:2px 5px;flex-shrink:0;margin-top:2px;white-space:nowrap;}
+.rest-body{flex:1;}
+.rest-name{font-size:.8rem;font-weight:700;color:#14532d;}
+.rest-type{font-size:.62rem;color:#6b7280;margin-top:0;}
+.rest-meta{display:flex;gap:8px;align-items:center;margin-top:2px;flex-wrap:wrap;}
+.rest-rating{font-size:.63rem;color:#f59e0b;font-weight:700;}
+.rest-price{font-size:.63rem;color:#6b7280;font-weight:600;}
+.rest-desc{font-size:.68rem;color:#374151;margin-top:2px;line-height:1.35;}
+.rest-map{font-size:.6rem;background:#16a34a;color:#fff;border-radius:10px;padding:2px 7px;text-decoration:none;font-weight:700;flex-shrink:0;}
+.rest-map:hover{background:#14532d;}
+
+.lr-section{background:#f5f3ff;border-top:1px solid #ddd6fe;padding:10px 13px;}
+.lr-head{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.lr-ico{width:20px;height:20px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;font-weight:800;flex-shrink:0;}
+.lr-title{font-size:.78rem;font-weight:700;color:var(--purple);}
+.lr-item{font-size:.74rem;color:#4c1d95;padding:3px 0 3px 12px;border-right:2px solid #c4b5fd;margin-right:6px;line-height:1.4;}
+
+.bus-section{background:#fff7ed;border-top:1px solid #fed7aa;padding:9px 13px;}
+.bus-head{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.bus-ico{width:20px;height:20px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;flex-shrink:0;}
+.bus-title{font-size:.78rem;font-weight:700;color:var(--orange);}
+.bus-tip{font-size:.74rem;color:#9a3412;line-height:1.45;}
+
+.cost-result{background:linear-gradient(135deg,#1a1a2e,#0f1729);border-radius:14px;padding:14px;margin-top:10px;}
+.cr-title{font-size:.7rem;color:var(--gold);font-weight:700;letter-spacing:.8px;margin-bottom:9px;}
+.cr-opt{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid rgba(255,255,255,.07);}
+.cr-opt.best{border-color:var(--green);background:rgba(39,174,96,.09);}
+.cr-opt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:2px;}
+.cr-name{font-size:.78rem;font-weight:700;color:#fff;}
+.cr-rec{background:var(--green);color:#fff;font-size:.63rem;font-weight:800;padding:2px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.cr-total{font-size:.92rem;font-weight:800;color:var(--gold);}
+.cr-note{font-size:.68rem;color:rgba(255,255,255,.35);text-align:center;margin-top:5px;}
+
+/* Events */
+.ev-card{border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;box-shadow:0 2px 14px rgba(0,0,0,.1);overflow:hidden;position:relative;}
+.ev-card::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,.05);border-radius:50%;}
+.ev-date{font-size:.72rem;opacity:.82;margin-bottom:3px;font-weight:600;}
+.ev-name{font-size:.95rem;font-weight:800;margin-bottom:3px;}
+.ev-loc{font-size:.77rem;opacity:.9;margin-bottom:4px;}
+.ev-desc{font-size:.76rem;opacity:.85;margin-bottom:7px;line-height:1.45;}
+.ev-badge{display:inline-block;background:rgba(255,255,255,.22);padding:3px 9px;border-radius:18px;font-size:.7rem;font-weight:600;}
+
+/* Calculator */
+.fl-lbl{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:4px;display:block;}
+.fsel{padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:.88rem;font-family:'Heebo',sans-serif;direction:rtl;background:#fff;width:100%;cursor:pointer;color:var(--text);min-height:44px;transition:border-color .2s;}
+.fsel:focus{outline:none;border-color:var(--indigo);}
+.calc-btn{background:linear-gradient(135deg,var(--orange),#ea6c0a);color:#fff;border:none;padding:12px;min-height:44px;border-radius:10px;font-size:.92rem;font-family:'Heebo',sans-serif;font-weight:800;cursor:pointer;width:100%;margin-top:4px;box-shadow:0 4px 12px rgba(249,115,22,.3);transition:opacity .15s;}
+.calc-btn:active{opacity:.9;}
+.result-wrap{background:linear-gradient(135deg,#eef2ff,#f0fdf4);border-radius:12px;padding:13px;margin-top:10px;border:1px solid #dde4ff;}
+.result-head{font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:9px;}
+.opt-card{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:7px;border:2px solid var(--border);}
+.opt-card.best{border-color:var(--green);}
+.opt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;margin-bottom:2px;}
+.opt-name{font-weight:800;font-size:.82rem;color:var(--navy);}
+.opt-rec{background:var(--green);color:#fff;padding:2px 7px;border-radius:9px;font-size:.65rem;font-weight:800;flex-shrink:0;}
+.opt-break{font-size:.72rem;color:var(--muted);margin-bottom:1px;}
+.opt-total{font-size:.98rem;font-weight:800;color:var(--indigo);}
+
+#hours-bar{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:8px 0 5px;}
+.h-seg{flex:1;}
+.h-labels{display:flex;justify-content:space-between;font-size:.63rem;color:var(--muted);}
+.hours-legend{display:flex;gap:11px;flex-wrap:wrap;margin-top:7px;}
+.hleg{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--muted);}
+.hleg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.tc.active .card,.tc.active .note,.tc.active .ev-card,.tc.active .city-btn,.tc.active .builder-section{animation:slideUp .18s ease both;}
+.tc.active .city-btn:nth-child(1){animation-delay:.02s;}.tc.active .city-btn:nth-child(2){animation-delay:.05s;}
+.tc.active .city-btn:nth-child(3){animation-delay:.08s;}.tc.active .city-btn:nth-child(4){animation-delay:.11s;}
+.tc.active .city-btn:nth-child(5){animation-delay:.14s;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ══ ONBOARDING ══ -->
+<div id="ob-overlay" class="ob-overlay">
+  <div class="ob-card">
+    <div class="ob-icon">🚂</div>
+    <div class="ob-title">שלום! מי יוצא לטיול?</div>
+    <div class="ob-sub">מלאו פרטים — נחשב מחירים ונתאים מסלולים לזמן שיש לכם</div>
+    <div class="ob-travelers" id="ob-travelers"></div>
+    <button class="ob-add" onclick="addTraveler()">+ הוסיפי נוסע</button>
+    <div class="ob-group">
+      <label class="ob-lbl" for="ob-address">🏠 כתובת מגורים (עיר / רחוב)</label>
+      <input class="ob-inp full" id="ob-address" placeholder="לדוגמה: פעמונית 23 יבנה, ראשון לציון…" oninput="detectStation()">
+      <div class="ob-station-detect" id="ob-station-detect"></div>
+    </div>
+    <div class="ob-group">
+      <label class="ob-lbl" for="ob-station-sel">🚉 תחנת רכבת קרובה (ניתן לשנות)</label>
+      <select class="ob-inp full" id="ob-station-sel" style="cursor:pointer;">
+        <option value="יבנה מערב|0">יבנה מערב</option>
+        <option value="יבנה מזרח|2">יבנה מזרח</option>
+        <option value="ראשון לציון הראשונים|8">ראשון לציון הראשונים</option>
+        <option value="נס ציונה-כפר חב&quot;ד|6">נס ציונה-כפר חב"ד</option>
+        <option value="רחובות|12">רחובות</option>
+        <option value="לוד|18">לוד</option>
+        <option value="רמלה|16">רמלה</option>
+        <option value="חולון-וולפסון|25">חולון-וולפסון</option>
+        <option value="בת ים קוממיות|28">בת ים קוממיות</option>
+        <option value="תל אביב מרכז-סבידור|35">תל אביב מרכז-סבידור</option>
+        <option value="נתניה|50">נתניה</option>
+        <option value="ירושלים-יצחק נבון|70">ירושלים-יצחק נבון</option>
+        <option value="חיפה מרכז השמונה|90">חיפה מרכז השמונה</option>
+        <option value="אחר|0">אחר…</option>
+      </select>
+    </div>
+    <button class="ob-go" onclick="saveProfile()">יאללה נסעים! 🚂</button>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="hdr-left">
+      <div class="hdr-icon">🚂</div>
+      <div>
+        <div class="hdr-title">טיול <em>ברכבת</em> 2026</div>
+      </div>
+    </div>
+    <div class="profile-chip" onclick="openProfile()" role="button" tabindex="0" aria-label="עריכת פרופיל">
+      <div class="profile-names" id="profile-names">הגדרות</div>
+      <div class="profile-edit">✏️</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs" role="tablist">
+  <button class="tb active" role="tab" onclick="showTab('builder',this)">🗺️ בנה מסלול</button>
+  <button class="tb" role="tab" onclick="showTab('events',this)">🎉 אירועים</button>
+  <button class="tb" role="tab" onclick="showTab('calc',this)">💰 מחשבון</button>
+  <button class="tb" role="tab" onclick="showTab('hours',this)">⏰ שעות</button>
+</div>
+
+
+<!-- ══ TAB: BUILDER ══ -->
+<div id="tc-builder" class="tc active">
+  <div class="sec-banner">
+    <div class="sec-icon">🗺️</div>
+    <div>
+      <div class="sec-title">בנה מסלול אישי</div>
+      <div class="sec-sub">בחרי יעד, שעות ותחנות — נייצר לוח זמנים + עלויות</div>
+    </div>
+  </div>
+  <div class="dbody">
+
+    <!-- Time window -->
+    <div class="builder-section">
+      <div class="bs-title">🕐 מתי יוצאים וחוזרים?</div>
+      <div class="time-row">
+        <div class="time-group">
+          <label class="time-lbl" for="dep-sel">יציאה מהבית</label>
+          <select class="time-sel" id="dep-sel" onchange="onTimeChange()"></select>
+        </div>
+        <div class="time-group">
+          <label class="time-lbl" for="ret-sel">חזרה עד</label>
+          <select class="time-sel" id="ret-sel" onchange="onTimeChange()"></select>
+        </div>
+      </div>
+      <div class="time-avail" id="time-avail"></div>
+      <div class="time-warn" id="time-warn"></div>
+    </div>
+
+    <div class="slabel">לאן נוסעים?</div>
+    <div class="city-grid" id="city-grid"></div>
+
+    <div id="builder-options" style="display:none;">
+      <div class="builder-section">
+        <div class="bs-title">📍 אילו תחנות לכלול?</div>
+        <div id="stations-list"></div>
+      </div>
+
+      <div class="builder-section">
+        <div class="bs-title">🚌 תחבורה נוספת (אופציונלי)</div>
+        <div class="transport-grid" id="transport-grid"></div>
+      </div>
+
+      <div id="cost-preview-wrap"></div>
+      <button class="gen-btn" id="gen-btn" onclick="generateRoute()">✨ צרי לי מסלול!</button>
+    </div>
+
+    <div id="generated-route" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+
+<!-- ══ TAB: EVENTS ══ -->
+<div id="tc-events" class="tc">
+  <div class="sec-banner"><div class="sec-icon">🎉</div><div><div class="sec-title">אירועים מיוחדים — יולי 2026</div><div class="sec-sub">הזדמנויות לשלב עם הטיול ברכבת</div></div></div>
+  <div class="dbody" id="events-wrap"></div>
+</div>
+
+
+<!-- ══ TAB: CALCULATOR ══ -->
+<div id="tc-calc" class="tc">
+  <div class="sec-banner"><div class="sec-icon">💰</div><div><div class="sec-title">מחשבון עלויות</div><div class="sec-sub">כרטיסים בודדים לעומת חופשי יומי</div></div></div>
+  <div class="dbody">
+    <div class="note indigo">ילדים 5–18 — <strong>50% הנחה</strong> | עד 5 — חינם! | 18+ מחיר מלא</div>
+    <div style="display:flex;flex-direction:column;gap:11px;">
+      <div><label class="fl-lbl" for="sel-dest">📍 יעד</label><select class="fsel" id="sel-dest"><option value="">-- בחרי --</option><option value="ashdod">אשדוד</option><option value="tlv">תל אביב</option><option value="netanya">נתניה</option><option value="jerusalem">ירושלים</option><option value="haifa">חיפה</option><option value="akko">עכו/נהריה</option></select></div>
+      <div><label class="fl-lbl" for="sel-adults">👩 מבוגרים (18+)</label><select class="fsel" id="sel-adults"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+      <div><label class="fl-lbl" for="sel-kids">👧 ילדים (5–18)</label><select class="fsel" id="sel-kids"><option value="0">ללא</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option></select></div>
+      <button class="calc-btn" onclick="calcStandalone()">חשבי לי!</button>
+    </div>
+    <div id="calc-result" aria-live="polite"></div>
+  </div>
+</div>
+
+
+<!-- ══ TAB: HOURS ══ -->
+<div id="tc-hours" class="tc">
+  <div class="sec-banner"><div class="sec-icon">⏰</div><div><div class="sec-title">מתי כדאי לנסוע?</div><div class="sec-sub">מפת עומס יומית</div></div></div>
+  <div class="dbody">
+    <div class="card"><div class="cin"><div class="cico">📊</div><div class="cbody"><div class="cname">עומס שעות ביום עבודה</div>
+      <div id="hours-bar" role="img" aria-label="מפת עומס" style="margin-top:9px;"></div>
+      <div class="h-labels"><span>05:00</span><span>08:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>20:00</span></div>
+      <div class="hours-legend"><div class="hleg"><div class="hleg-dot" style="background:#e74c3c;"></div><span>עומס</span></div><div class="hleg"><div class="hleg-dot" style="background:#D97706;"></div><span>בינוני</span></div><div class="hleg"><div class="hleg-dot" style="background:#27ae60;"></div><span>שקט ✅</span></div></div>
+    </div></div></div>
+    <div class="note green">✅ <strong>הזמן המושלם: 9:00–15:30</strong> — הכי פחות עומס, הכי נוח</div>
+    <div class="slabel">ימים בעייתיים</div>
+    <div class="card warn"><div class="cin"><div class="cico">⚠️</div><div class="cbody"><div class="cname">ראשון בבוקר עד 10:00</div><div class="cdesc">חיילים חוזרים לבסיס — רכבות מלאות עד גדות.</div></div></div></div>
+    <div class="card warn"><div class="cin"><div class="cico">⚠️</div><div class="cbody"><div class="cname">רביעי–חמישי מ-16:00</div><div class="cdesc">חיילים חוזרים הביתה — תנסי לחזור לפני 16:00.</div></div></div></div>
+    <div class="slabel">טיפים</div>
+    <div class="card"><div class="cin"><div class="cico">💳</div><div class="cbody"><div class="cname">חופשי יומי (₪99 מבוגר / ₪49.50 ילד)</div><div class="cdesc">משתלם לחיפה, ירושלים, עכו — או כשמשלבים כמה תחנות ביום.</div></div></div></div>
+    <div class="card"><div class="cin"><div class="cico">📱</div><div class="cbody"><div class="cname">אפליקציית רכבת ישראל</div><div class="cdesc">כרטיסים, לוחות זמנים, תכנון מסלול.</div><div class="cmeta" style="margin-top:7px;"><a class="badge badge-blue" href="https://rail.co.il" target="_blank" rel="noopener" style="text-decoration:none;">🌐 rail.co.il</a></div></div></div></div>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+
+// Known cities → nearest rail station + extra travel minutes from Yavne East
+const HOME_STATIONS = [
+  // יבנה מערב first — western streets/neighborhoods
+  {keywords:['פעמונית','מגדלי הים','שכונת הים','יבנה מערב','מרכז מסחרי מערב','אשרמן','גבעות יבנה'],
+                              station:'יבנה מערב',              extraMins:0},
+  {keywords:['יבנה'],         station:'יבנה מזרח',              extraMins:2},
+  {keywords:['ראשון','ראשון לציון'], station:'ראשון לציון הראשונים', extraMins:8},
+  {keywords:['נס ציונה','נס-ציונה'], station:'נס ציונה-כפר חב"ד',    extraMins:6},
+  {keywords:['רחובות'],       station:'רחובות',                  extraMins:12},
+  {keywords:['לוד'],           station:'לוד',                    extraMins:18},
+  {keywords:['רמלה'],          station:'רמלה',                   extraMins:16},
+  {keywords:['חולון'],         station:'חולון-וולפסון',           extraMins:25},
+  {keywords:['בת ים','בת-ים'], station:'בת ים קוממיות',          extraMins:28},
+  {keywords:['תל אביב','תל-אביב'], station:'ת"א מרכז-סבידור',   extraMins:35},
+  {keywords:['פתח תקווה','פ"ת'], station:'פתח תקווה-קריית אריה',extraMins:40},
+  {keywords:['ירושלים'],       station:'ירושלים-יצחק נבון',      extraMins:70},
+  {keywords:['חיפה'],          station:'חיפה מרכז השמונה',        extraMins:90},
+  {keywords:['באר שבע','ב"ש'], station:'באר שבע מרכז',           extraMins:40},
+  {keywords:['נתניה'],         station:'נתניה',                   extraMins:50},
+  {keywords:['אשדוד'],         station:'אשדוד עד הים',            extraMins:0},
+];
+
+const CITIES = {
+  ashdod:    {label:'אשדוד',    emoji:'🏖️', adultOW:11,   travel:'15 דק׳ ישיר!', travelMins:15, diff:'קל מאוד',  stations:['ashdod_yam'], hasLR:false, event:null},
+  tlv:       {label:'תל אביב', emoji:'🏙️', adultOW:16.5, travel:'35 דק׳',        travelMins:35, diff:'קל',        stations:['tlv_hagana','tlv_hashalom','tlv_savidor','tlv_university'], hasLR:true,  event:'🎭 פסטיבל קיץ סוזן דלאל — כל יולי!'},
+  jerusalem: {label:'ירושלים', emoji:'🏛️', adultOW:26.5, travel:'70 דק׳',        travelMins:70, diff:'בינוני',   stations:['jlm_navon'], hasLR:true,  event:'🎼 פסטיבל ישראל ה-65 — מ-28 יולי!'},
+  haifa:     {label:'חיפה',    emoji:'🏔️', adultOW:35,   travel:'90 דק׳',        travelMins:90, diff:'בינוני',   stations:['binyamina','hf_bat_galim','hf_shamona','hf_mifratz'], hasLR:false, event:null},
+  akko:      {label:'עכו',     emoji:'⚓', adultOW:40,   travel:'120 דק׳',       travelMins:120,diff:'יום ארוך', stations:['akko'], hasLR:false, event:null}
+};
+
+// visitTime = recommended time at station in minutes
+const STATIONS = {
+  ashdod_yam:{name:'אשדוד-עד הים',badge:'ישיר — 15 דק׳!',optional:false,arrOffset:15,visitTime:210,
+    nearby:[
+      {name:'חוף אשדוד',     walk:'2 דק׳', price:'חינם', rating:'4.3',
+       desc:'ממש מהרציף אל החוף. חול נקי, מקלחות, חדרי הלבשה ומציל. מתאים לשחייה ולים פנאי. לא עמוס ביחס לחופי ת"א.',
+       mapUrl:'https://maps.google.com/?q=חוף+אשדוד'},
+      {name:'טיילת אשדוד',   walk:'5 דק׳', price:'חינם', rating:'4.2',
+       desc:'פרומנדה מסודרת עם בתי קפה, מסעדות, גלידריות ומכוני שיזוף. יפה במיוחד בשעות הצהריים. ספסלים בצל לאורך הדרך.',
+       mapUrl:'https://maps.google.com/?q=טיילת+אשדוד'},
+      {name:'קניון הים',     walk:'8 דק׳', price:'חינם', rating:'3.9',
+       desc:'קניון מהנה עם כל הרשתות הגדולות, בית קפה ומזנון. טוב לנפוח מהחום שעה-שעתיים.',
+       mapUrl:'https://maps.google.com/?q=קניון+הים+אשדוד'},
+    ],
+    restaurants:[
+      {name:'XL בר ים', type:'מסעדת שף', walk:'3 דק׳', rating:'4.3', price:'₪₪', desc:'שולחנות על הפרומנדה ממש מול הים. דגים טריים, פסטה ים תיכונית, עוגת שוקולד לגמר.', mapUrl:'https://maps.google.com/?q=XL+בר+ים+אשדוד'},
+      {name:'קפה ג׳ו', type:'קפה+ארוחות', walk:'2 דק׳', rating:'4.1', price:'₪', desc:'ארוחות בוקר עד 14:00, סנדוויצ׳ים ושייקים. תור קצר, מהיר, זול. מול הים.', mapUrl:'https://maps.google.com/?q=קפה+ג+ו+אשדוד'},
+      {name:'פיצה בר אשדוד', type:'פיצריה', walk:'5 דק׳', rating:'4.0', price:'₪', desc:'פיצה פרוסות וכלים גדולים. ילדים מתים עליה. מהיר ולא יקר.', mapUrl:'https://maps.google.com/?q=פיצה+בר+אשדוד'},
+    ],
+    lr:[],bus:'קו 5 לאשדוד מרכז | קו 440 לת"א ישיר | קו 302 לאשקלון'},
+
+  tlv_hagana:{name:'ת"א-הגנה',badge:'נווה צדק + מתחם התחנה',optional:false,arrOffset:35,visitTime:120,
+    nearby:[
+      {name:'מתחם התחנה',  walk:'3 דק׳',  price:'חינם', rating:'4.5',
+       desc:'מבנים היסטוריים של תחנת הרכבת הראשונה בארץ (1892). בתוכו: גלריות עיצוב, בוטיקים, מסעדות ובתי קפה. כניסה חינם. הילדים אוהבים לצלם בקרון הישן.',
+       mapUrl:'https://maps.google.com/?q=מתחם+התחנה+תל+אביב'},
+      {name:'נווה צדק',    walk:'8 דק׳',  price:'חינם', rating:'4.7',
+       desc:'השכונה הכי ציורית בתל אביב. בתים צבעוניים, חנויות וינטג׳, גלריות אמנות ובתי קפה קטנים. רחוב שבזי הוא הלב — חייבות לטייל שם. מעולה לצילומים.',
+       mapUrl:'https://maps.google.com/?q=נווה+צדק+תל+אביב'},
+      {name:'שוק הכרמל',  walk:'10 דק׳', price:'חינם', rating:'4.6',
+       desc:'השוק הכי גדול בתל אביב. פירות, ירקות, בשמים, בגדים ואוכל מוכן. כדאי להגיע רעבות — שאוורמה, מיצים טריים ולחמנייה חמה ממש בשוק.',
+       mapUrl:'https://maps.google.com/?q=שוק+הכרמל+תל+אביב'},
+      {name:'פלורנטין',   walk:'12 דק׳', price:'חינם', rating:'4.4',
+       desc:'שכונת הגרפיטי וה-street art של ת"א. כל קיר הוא יצירת אמנות. בתי קפה עצמאיים, חנויות וינטג׳ ורחוב בן סרוק. המקום הכי cool בעיר לגילאי 13–25.',
+       mapUrl:'https://maps.google.com/?q=פלורנטין+תל+אביב'},
+    ],
+    restaurants:[
+      {name:'הנמל 24', type:'מסעדת שף', walk:'3 דק׳', rating:'4.5', price:'₪₪₪', desc:'מסעדת שף יוקרתית במתחם התחנה. ניוקי, דגים ובשרים. מומלץ להזמין מראש בסוף שבוע.', mapUrl:'https://maps.google.com/?q=הנמל+24+תל+אביב'},
+      {name:'שאוורמה שוק הכרמל', type:'פסט-פוד', walk:'10 דק׳', rating:'4.6', price:'₪', desc:'השאוורמה הכי טובה באזור לפי דירוג Google. פיתה גדולה, טחינה ביתית וחומוס. ₪45–55 לפיתה מלאה.', mapUrl:'https://maps.google.com/?q=שאוורמה+שוק+הכרמל'},
+      {name:'לואי', type:'בית קפה-שף', walk:'8 דק׳', rating:'4.6', price:'₪₪', desc:'בית קפה בנווה צדק עם ארוחות בוקר עד 16:00. ביצים בנדיקט, פנקייק וסלטים עשירים. תור בסוף שבוע.', mapUrl:'https://maps.google.com/?q=לואי+נווה+צדק'},
+    ],
+    lr:['lr_hagana'],bus:'קו 40, 41 למרכז העיר | קו 5 ליפו עתיקה'},
+
+  tlv_hashalom:{name:'ת"א-השלום',badge:'עזריאלי + שדרות רוטשילד',optional:false,arrOffset:38,visitTime:90,
+    nearby:[
+      {name:'מגדלי עזריאלי', walk:'3 דק׳', price:'חינם / ₪25 תצפית', rating:'4.5',
+       desc:'שלושה מגדלים אייקוניים. הקניון בתחתית עם כל הרשתות. תצפית מהקומה ה-49 של המגדל הגבוה — נוף עוצר נשימה על כל תל אביב, הים והקרייה. מומלץ!',
+       mapUrl:'https://maps.google.com/?q=מגדלי+עזריאלי+תל+אביב'},
+      {name:'שדרות רוטשילד', walk:'10 דק׳', price:'חינם', rating:'4.8',
+       desc:'הרחוב הכי יפה בישראל. שדרת עצים ענקית, פסלים, ספסלים ומסלול אופניים. בתי קפה בכל פינה. בסוף הרחוב — בית דיזנגוף, לוחמי הגטאות ועוד.',
+       mapUrl:'https://maps.google.com/?q=שדרות+רוטשילד+תל+אביב'},
+      {name:'גן מאיר',      walk:'18 דק׳', price:'חינם', rating:'4.3',
+       desc:'פארק עירוני ירוק ושקט. בריכה, גינות ואזורי ישיבה בצל. טוב לנוח ולאכול בפיקניק קטן אחרי הליכה ארוכה.',
+       mapUrl:'https://maps.google.com/?q=גן+מאיר+תל+אביב'},
+    ],
+    restaurants:[
+      {name:'נחמה וחצי', type:'שאוורמה מפורסמת', walk:'12 דק׳', rating:'4.5', price:'₪', desc:'מוסד תל אביבי. שאוורמה טורקית בפיתה ענקית עם ירקות טריים. תמיד תור קצר בצהריים. ₪55–65.', mapUrl:'https://maps.google.com/?q=נחמה+וחצי+תל+אביב'},
+      {name:'קפה רוטשילד 90', type:'קפה-ביסטרו', walk:'10 דק׳', rating:'4.4', price:'₪₪', desc:'ממש על שדרות רוטשילד. ארוחות בוקר, פסטה, המבורגר. אווירה נעימה בצל.', mapUrl:'https://maps.google.com/?q=קפה+רוטשילד+90'},
+      {name:'פפינה', type:'פסטה ביתית', walk:'15 דק׳', rating:'4.3', price:'₪₪', desc:'פסטה ורביולי תוצרת בית. מנות גדולות ומעולות. מתאים לצהריים נינוחים.', mapUrl:'https://maps.google.com/?q=פפינה+תל+אביב'},
+    ],
+    lr:['lr_azrieli'],bus:'קו 63, 180 לדיזנגוף ורמת גן'},
+
+  tlv_savidor:{name:'ת"א מרכז-סבידור',badge:'תחנה מרכזית',optional:false,arrOffset:40,visitTime:90,
+    nearby:[
+      {name:'שוק לוינסקי', walk:'15 דק׳', price:'חינם', rating:'4.5',
+       desc:'שוק תבלינים, מיובשים ואוכל מהעולם. ריחות מדהימים: כורכום, זעפרן, ורדים מיובשים. הסוחרים מלאי אנרגיה. חייבות לטעום שם.',
+       mapUrl:'https://maps.google.com/?q=שוק+לוינסקי+תל+אביב'},
+      {name:'שוק הפשפשים ביפו', walk:'20 דק׳ / אוטובוס', price:'חינם', rating:'4.4',
+       desc:'המקום הכי מגניב לציד וינטג׳. תכשיטים ישנים, רהיטים, בגדים, כלי מוזיקה ופסלים. גם אם לא קונות — הטיול בשוק הוא חוויה. פתוח עד 18:00.',
+       mapUrl:'https://maps.google.com/?q=שוק+הפשפשים+יפו'},
+    ],
+    restaurants:[
+      {name:'שוק לוינסקי — מאכלים', type:'שוק אוכל', walk:'15 דק׳', rating:'4.5', price:'₪', desc:'בתוך השוק יש דוכנים עם מאכלים בוכרים, פרסיים ויווניים. חצילים צלויים, בורקס ומאמול. ₪20–35 למנה.', mapUrl:'https://maps.google.com/?q=שוק+לוינסקי+תל+אביב'},
+      {name:'אלבה', type:'ביסטרו', walk:'18 דק׳', rating:'4.3', price:'₪₪', desc:'פסטה ביתית, שטרודל ומנות ים תיכוניות. אווירה נעימה, מקום ישיבה בחוץ.', mapUrl:'https://maps.google.com/?q=אלבה+תל+אביב'},
+    ],
+    lr:['lr_central'],bus:'תחנה מרכזית ת"א — כל הקווים | קו 5 ליפו'},
+
+  tlv_university:{name:'ת"א-אוניברסיטה',badge:'צפון ת"א',optional:false,arrOffset:45,visitTime:90,
+    nearby:[
+      {name:'קניון רמת אביב', walk:'5 דק׳', price:'חינם', rating:'4.1',
+       desc:'קניון גדול ומאורגן עם כל הרשתות, בתי קפה ומסעדות. מזגן מושלם לשעות הצהריים החמות. יש מנגה, פנינגס ואיקאה בקרבת מקום.',
+       mapUrl:'https://maps.google.com/?q=קניון+רמת+אביב'},
+      {name:'מוזיאון ארץ ישראל', walk:'10 דק׳', price:'₪45', rating:'4.3',
+       desc:'קמפוס מוזיאון ענק עם פביליונים לקדרות, מטבעות, ממצאים ארכאולוגיים ומינרלים. כיפת הזכוכית מרשימה. מתאים לגילאי 10+. ~2 שעות.',
+       mapUrl:'https://maps.google.com/?q=מוזיאון+ארץ+ישראל+תל+אביב'},
+      {name:'חוף נורדאו', walk:'20 דק׳', price:'חינם', rating:'4.2',
+       desc:'חוף עם מתקני ספורט ים, מגרש כדורסל על החול וטיילת נחמדה. פחות צפוף מחופי מרכז ת"א. תחנת אוטובוס ממש ליד.',
+       mapUrl:'https://maps.google.com/?q=חוף+נורדאו+תל+אביב'},
+    ],
+    restaurants:[
+      {name:'מסעדות קניון רמת אביב', type:'מגוון', walk:'5 דק׳', rating:'4.0', price:'₪₪', desc:'בתוך הקניון: קפה ג׳ו, מקדונלד׳ס, נודלס בר, פיצה האט ועוד. לכל טעם וכיס.', mapUrl:'https://maps.google.com/?q=קניון+רמת+אביב'},
+      {name:'ABC Burger', type:'המבורגריה', walk:'7 דק׳', rating:'4.3', price:'₪', desc:'המבורגר ידני, צ׳יפס ביתי ושייק. ₪55–75. ילדים מתים עליה.', mapUrl:'https://maps.google.com/?q=ABC+Burger+תל+אביב'},
+    ],
+    lr:['lr_university'],bus:'קו 23, 89 לכיוון הרצליה'},
+
+  binyamina:{name:'בנימינה',badge:'עצירת ביניים אופציונלית',optional:true,arrOffset:55,visitTime:60,
+    nearby:[
+      {name:'שביל נחל עדה', walk:'5 דק׳', price:'חינם', rating:'4.5',
+       desc:'שביל טבע ישירות מהתחנה לאורך נחל עדה. ירוק, מוצל ומרענן גם בקיץ. אורך השביל ~3 ק"מ, חזרה באותו מסלול. מגפיים לא דרוש — נעלי ספורט מספיקות.',
+       mapUrl:'https://maps.google.com/?q=נחל+עדה+בנימינה'},
+      {name:'מושבת בנימינה', walk:'10 דק׳', price:'חינם', rating:'4.4',
+       desc:'מושבה ירוקה עם בתים היסטוריים מ-1922. יש שוק אמנים בסופי שבוע, בית קפה עם מאפים ביתיים וחנויות עיצוב קטנות. שקטה ונחמדת לשעה קצרה.',
+       mapUrl:'https://maps.google.com/?q=מושבת+בנימינה'},
+      {name:'יקב זיכרון יעקב', walk:'אוטובוס 921 — 10 דק׳', price:'₪30–50', rating:'4.6',
+       desc:'יקב קרמי — אחד מהגדולים בישראל. יש סיורים עם טעימות (לרעות). לבנות — גינת היקב יפהפה, מוזיאון ומרפסת עם נוף לכרמל.',
+       mapUrl:'https://maps.google.com/?q=יקב+זיכרון+יעקב'},
+    ],
+    restaurants:[
+      {name:'קפה ינונה', type:'קפה-ארוחות בוקר', walk:'8 דק׳', rating:'4.6', price:'₪₪', desc:'ארוחות בוקר מיוחדות עד 14:00. ביצים בצורות שונות, חלות קלועות וריבות בית. אחד הכי מדורגים באזור השרון.', mapUrl:'https://maps.google.com/?q=קפה+ינונה+בנימינה'},
+      {name:'מסעדת הבית', type:'אוכל ביתי', walk:'12 דק׳', rating:'4.4', price:'₪₪', desc:'מנות ישראליות ביתיות — שניצל, מרק עוף, חמין. הרגשה של אכול אצל סבתא.', mapUrl:'https://maps.google.com/?q=מסעדת+הבית+בנימינה'},
+    ],
+    lr:[],bus:'קו 921 לזיכרון יעקב | קו 202 לחיפה ישיר'},
+
+  hf_bat_galim:{name:'חיפה-בת גלים',badge:'חוף + רכבל',optional:false,arrOffset:90,visitTime:120,
+    nearby:[
+      {name:'טיילת בת גלים', walk:'8 דק׳', price:'חינם', rating:'4.4',
+       desc:'טיילת ירוקה ומסודרת עם מדשאות, מגרשי ספורט וגישה נוחה לחוף הים. בקצה הטיילת — תחנת הרכבל. פחות עמוסה מחוף הכרמל.',
+       mapUrl:'https://maps.google.com/?q=טיילת+בת+גלים+חיפה'},
+      {name:'רכבל כרמל אייר', walk:'5 דק׳ לקצה הטיילת', price:'₪20–25 הלוך-חזור', rating:'4.6',
+       desc:'רכבל ייחודי בישראל — 4.5 ק"מ מבת גלים עד סטלה מאריס בראש הכרמל. נוף מהמם על מפרץ חיפה, הים והנמל. עובד בד"כ 10:00–18:00. בדקי שעות לפני!',
+       mapUrl:'https://maps.google.com/?q=כרמל+אייר+חיפה'},
+      {name:'מערת אליהו הנביא', walk:'15 דק׳ מהרכבל', price:'חינם', rating:'4.5',
+       desc:'מערה קדושה לשלוש דתות — יהודים, נוצרים ומוסלמים. מקום שקט ומרשים עם נוף לים. לאחר המערה — גן קטן וספסלים לנוח.',
+       mapUrl:'https://maps.google.com/?q=מערת+אליהו+הנביא+חיפה'},
+    ],
+    restaurants:[
+      {name:'גוסטו', type:'מסעדת שף', walk:'10 דק׳', rating:'4.4', price:'₪₪', desc:'מסעדה ים תיכונית על טיילת בת גלים. פסטה, דגים ומנות עגל. אווירה מרגיעה עם נוף לים.', mapUrl:'https://maps.google.com/?q=גוסטו+חיפה'},
+      {name:'כי טוב', type:'פיתות ושאוורמה', walk:'7 דק׳', rating:'4.3', price:'₪', desc:'שאוורמה, פלאפל ופיתות טריות. מהיר וזול. ₪35–50 למנה. פופולרי מאוד בקרב המקומיים.', mapUrl:'https://maps.google.com/?q=כי+טוב+חיפה'},
+    ],
+    lr:[],bus:'קו 45 לואדי ניסנאס | קו 3 למרכז חיפה'},
+
+  hf_shamona:{name:'חיפה מרכז השמונה',badge:'עיר תחתית',optional:false,arrOffset:95,visitTime:100,
+    nearby:[
+      {name:'ואדי ניסנאס', walk:'12 דק׳', price:'חינם', rating:'4.6',
+       desc:'שכונה ערבית-נוצרית קסומה עם שוק, גלריות ומסעדות. פסלים בכל פינה (מרכז הפסלים של ואדי ניסנאס). פלאפל מהמם, בקלאוה אמיתית וקפה טורקי. אחד המקומות הכי ייחודיים בישראל.',
+       mapUrl:'https://maps.google.com/?q=ואדי+ניסנאס+חיפה'},
+      {name:'מושבה גרמנית', walk:'15 דק׳', price:'חינם', rating:'4.5',
+       desc:'שכונה שהקימו תמפלרים גרמנים ב-1868. בתים היסטוריים יפהפיים, שדרות בן גוריון עם עצי אקליפטוס ענקיים. מלמטה — נוף לגני הבהאי בטרסות (אתר UNESCO).',
+       mapUrl:'https://maps.google.com/?q=מושבה+גרמנית+חיפה'},
+      {name:'כרמלית', walk:'18 דק׳ (או קו 45)', price:'₪7', rating:'4.4',
+       desc:'הרכבת התת-קרקעית היחידה בישראל! 6 תחנות תת-קרקעיות מהעיר התחתית לראש הכרמל. רכבת היסטורית ומיוחדת. שוות לרכוב רק בשביל החוויה.',
+       mapUrl:'https://maps.google.com/?q=כרמלית+חיפה'},
+    ],
+    restaurants:[
+      {name:'אל-מינה', type:'מסעדה ערבית', walk:'12 דק׳', rating:'4.6', price:'₪', desc:'מסעדה ערבית אותנטית בואדי ניסנאס. חומוס, פלאפל, מוסח׳ן ולחם טנור. הכי טוב שתמצאו בחיפה. ₪30–50 לאדם.', mapUrl:'https://maps.google.com/?q=אל+מינה+חיפה'},
+      {name:'ג׳ן', type:'ביסטרו', walk:'15 דק׳', rating:'4.3', price:'₪₪', desc:'בית קפה וביסטרו במושבה הגרמנית. קפה איכותי, ארוחות צהריים ועוגות. נוף לשדרות בן גוריון.', mapUrl:'https://maps.google.com/?q=ג+ן+חיפה'},
+      {name:'קנאפה בואדי', type:'מתוקים', walk:'12 דק׳', rating:'4.7', price:'₪', desc:'קנאפה חמה ישר מהתנור. ₪15–25 לנתח. אחת הטובות בישראל לפי מדריכים רבים.', mapUrl:'https://maps.google.com/?q=קנאפה+ואדי+ניסנאס+חיפה'},
+    ],
+    lr:[],bus:'קו 45 לואדי ניסנאס | קו 3 לבת גלים'},
+
+  hf_mifratz:{name:'חיפה מרכזית המפרץ',badge:'רכבלית + אוניברסיטה',optional:false,arrOffset:100,visitTime:90,
+    nearby:[
+      {name:'רכבלית חיפה', walk:'5 דק׳', price:'₪15–20 הלוך-חזור', rating:'4.5',
+       desc:'רכבלית ייחודית 4.5 ק"מ מהמפרץ לאוניברסיטת חיפה. קפסולות זכוכית מעל גבעות הכרמל. נוף לעמק זבולון, המפרץ ובהירות — עד הגליל. פועלת ~10:00–17:00.',
+       mapUrl:'https://maps.google.com/?q=רכבלית+חיפה'},
+      {name:'אוניברסיטת חיפה — תצפית', walk:'קצה הרכבלית', price:'חינם', rating:'4.6',
+       desc:'מגדל אשת ספנות בקמפוס — נוף 360° על כל הצפון. ראית חיפה, עכו, נהריה, הכרמל, הגליל ובימים בהירים — לבנון. הכניסה לקמפוס חינמית.',
+       mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה'},
+    ],
+    restaurants:[
+      {name:'קפה פורטו', type:'קפה ים', walk:'7 דק׳', rating:'4.3', price:'₪₪', desc:'בית קפה עם נוף למפרץ. ארוחות בוקר, פסטה וסלטים. מומלץ לסיים שם את היום.', mapUrl:'https://maps.google.com/?q=קפה+פורטו+חיפה'},
+      {name:'קנטינה בקמפוס', type:'מזנון', walk:'קצה הרכבלית', rating:'3.9', price:'₪', desc:'קפה ואוכל מהיר בקמפוס האוניברסיטה. זול, מהיר, עם נוף.', mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה'},
+    ],
+    lr:[],bus:'קו 37 להדר הכרמל | קו 12 לעכו ישיר'},
+
+  jlm_navon:{name:'ירושלים-יצחק נבון',badge:'תחנה מרכזית',optional:false,arrOffset:70,visitTime:180,
+    nearby:[
+      {name:'שוק מחנה יהודה', walk:'15 דק׳', price:'חינם', rating:'4.7',
+       desc:'השוק הכי חי ותוסס בישראל. 250+ דוכנים עם ירקות, בשמים, ממתקים, בשר ואוכל מוכן. חגי, מומיק ובוריקס מפורסמים. ערב שוק הפך בלילה לאזור בארים — ביום בשבילכם!',
+       mapUrl:'https://maps.google.com/?q=שוק+מחנה+יהודה+ירושלים'},
+      {name:'רחוב יפו + בן יהודה', walk:'15 דק׳', price:'חינם', rating:'4.4',
+       desc:'הרחוב הראשי של ירושלים החדשה. קניות, קפה, מסעדות ורחוב עמוס חיים. ברחוב בן יהודה — מיצגים רחוב ומוזיקאים. כיפת הכנסת ביל בטווח הליכה.',
+       mapUrl:'https://maps.google.com/?q=רחוב+יפו+ירושלים'},
+      {name:'מוזיאון המדע (Bloomfield)', walk:'20 דק׳ / אוטובוס', price:'₪55', rating:'4.5',
+       desc:'מוזיאון מדע אינטראקטיבי מרתק לנוער. ניסויים שאפשר לעשות בעצמך, כיפת מניפולציות וציוד לייזר. ~3 שעות. מומלץ להזמין כרטיסים אונליין מראש.',
+       mapUrl:'https://maps.google.com/?q=מוזיאון+המדע+ירושלים'},
+      {name:'עיר עתיקה — יפו + רובע יהודי', walk:'25 דק׳ / אוטובוס 74', price:'חינם', rating:'4.8',
+       desc:'אחד מ-7 פלאי הייחד בעולם. רחובות מחוץ לזמן, כנסיות, מסגדים, בתי כנסת וחנויות עם ספייסים. שוק ערבי בין חומות עתיקות. לא לפספס בשום מצב.',
+       mapUrl:'https://maps.google.com/?q=עיר+עתיקה+ירושלים'},
+    ],
+    restaurants:[
+      {name:'שוק מחנה יהודה — חגי', type:'שאוורמה אגדית', walk:'15 דק׳', rating:'4.7', price:'₪', desc:'השאוורמה הכי מפורסמת בירושלים. תור ארוך אבל שווה. פיתה ענקית עם שלל תוספות. ₪55–70.', mapUrl:'https://maps.google.com/?q=שאוורמה+חגי+מחנה+יהודה'},
+      {name:'מסעדת פאסטל', type:'מסעדת שף', walk:'20 דק׳', rating:'4.6', price:'₪₪₪', desc:'אחת מהמסעדות הכי מדורגות בירושלים. תבשילים ים תיכוניים, סטייק ומנות שף. מומלץ להזמין.', mapUrl:'https://maps.google.com/?q=מסעדת+פאסטל+ירושלים'},
+      {name:'קפה כהן', type:'קפה וארוחות', walk:'15 דק׳', rating:'4.4', price:'₪₪', desc:'בית קפה ירושלמי קלאסי. ארוחות בוקר כל היום, עוגות ביתיות ואווירה מיוחדת.', mapUrl:'https://maps.google.com/?q=קפה+כהן+ירושלים'},
+    ],
+    lr:['jlm_lr_jaffa','jlm_lr_market'],bus:'קו 74, 78 למחנה יהודה | קו 1 (רכבת קלה!) לעיר עתיקה'},
+
+  akko:{name:'עכו',badge:'עיר עתיקה UNESCO',optional:false,arrOffset:120,visitTime:180,
+    nearby:[
+      {name:'מנהרות הצלבנים', walk:'12 דק׳', price:'₪55', rating:'4.8',
+       desc:'מנהרות מתחת לאדמה מהתקופה הצלבנית (מאה ה-12). האורות, הפסיפסים והגדלים — מרשימים לכל גיל. ממוזג. ~90 דקות לסיור המלא. ממש חובה!',
+       mapUrl:'https://maps.google.com/?q=מנהרות+הצלבנים+עכו'},
+      {name:'שוק עכו העתיק', walk:'10 דק׳', price:'חינם', rating:'4.5',
+       desc:'בזאר ערבי צבעוני בין חומות עתיקות. תבלינים, תכשיטים ייחודיים, בגדים רקומים וחנויות מסורתיות. האווירה שם — ממש אחרת.',
+       mapUrl:'https://maps.google.com/?q=שוק+עכו+העתיק'},
+      {name:'נמל הדייגים', walk:'15 דק׳', price:'חינם', rating:'4.4',
+       desc:'נמל ציורי עם סירות דייגים ישנות. מסעדות דגים ממש על המים. אחרי הארוחה — ישיבה על הסלעים מול הים. שקיעה מהנמל הזה — פנומנלית.',
+       mapUrl:'https://maps.google.com/?q=נמל+הדייגים+עכו'},
+      {name:'חוף הנמל ← תחום החומות', walk:'15 דק׳', price:'חינם', rating:'4.3',
+       desc:'שחייה בין אבנים מסותתות מהתקופה הצלבנית. מים כחולים נקיים. פחות צפוף מחופים רגילים. מגיעים לשם דרך שביל לאורך החומה.',
+       mapUrl:'https://maps.google.com/?q=חוף+עכו'},
+    ],
+    restaurants:[
+      {name:'אבו כריסטו', type:'מסעדת דגים', walk:'15 דק׳', rating:'4.5', price:'₪₪', desc:'מסעדת דגים ותיקה ומפורסמת על נמל עכו. דגים טריים שנלכדו בבוקר, שרימפס ומנות ים. ₪80–150 לאדם.', mapUrl:'https://maps.google.com/?q=אבו+כריסטו+עכו'},
+      {name:'קנאפה אכבר', type:'קנאפה אגדית', walk:'10 דק׳', rating:'4.8', price:'₪', desc:'אחת הקנאפות הכי מפורסמות בישראל ואולי בכל המזרח התיכון. חמה, קריספית ומתוקה בדיוק הנכון. ₪15–20. אל תפספסי!', mapUrl:'https://maps.google.com/?q=קנאפה+אכבר+עכו'},
+      {name:'הומוס סעיד', type:'חומוס בוקר', walk:'12 דק׳', rating:'4.6', price:'₪', desc:'חומוס בוקר אגדי — ₪25 לצלחת גדולה עם פיתה טרייה. מסורת של מעל 50 שנה. פתוח עד 12:00 בלבד.', mapUrl:'https://maps.google.com/?q=הומוס+סעיד+עכו'},
+    ],
+    lr:[],bus:'קו 271 לנהריה | קו 251 לחיפה'}
+};
+
+const LIGHT_RAIL = {
+  lr_hagana:    {name:'הגנה',           line:'Purple Line ת"א', color:'#7c3aed', dests:['ליפו עתיקה — 3 תחנות','לפלורנטין — תחנה','לשוק הפשפשים — 4 תחנות']},
+  lr_azrieli:   {name:'עזריאלי',        line:'Purple Line ת"א', color:'#7c3aed', dests:['לשדרות רוטשילד — 5 דק׳ הליכה','לכיכר רבין — 3 תחנות','לדיזנגוף — 4 תחנות']},
+  lr_central:   {name:'תחנה מרכזית',   line:'Purple Line ת"א', color:'#7c3aed', dests:['לשוק הפשפשים — תחנה','ליפו — 3 תחנות']},
+  lr_university:{name:'אוניברסיטה',    line:'Purple Line ת"א', color:'#7c3aed', dests:['לבני ברק — 4 תחנות','לפתח תקווה — קצה הקו']},
+  jlm_lr_jaffa: {name:'מחנה יהודה',   line:'Red Line ירושלים', color:'#e74c3c', dests:['ישר בכניסה לשוק!','לעיר העתיקה — 3 תחנות']},
+  jlm_lr_market:{name:'רחוב יפו/עיר עתיקה', line:'Red Line ירושלים', color:'#e74c3c', dests:['לשער יפו — 10 דק׳','לכיכר יפו — 5 דק׳']}
+};
+
+const EVENTS = [
+  {color:'linear-gradient(135deg,#4F46E5,#7c3aed)', date:'כל חודש יולי 2026', name:'🎭 פסטיבל קיץ — מרכז סוזן דלאל', loc:'📍 תל אביב | תחנה: ת"א-הגנה (8 דק׳)', desc:'ריקודים, תיאטרון והופעות קרקס לכל המשפחה.', badge:'בחינם ובתשלום'},
+  {color:'linear-gradient(135deg,#e74c3c,#b91c1c)', date:'28 יולי – 14 אוגוסט 2026', name:'🎼 פסטיבל ישראל ה-65', loc:'📍 ירושלים | תחנה: יצחק נבון', desc:'תיאטרון, מחול, מוזיקה ובכורות עולמיות.', badge:'🔥 קנו מראש!'},
+  {color:'linear-gradient(135deg,#27ae60,#10b981)', date:'כל יולי 2026', name:'🌿 אירועי טבע — החברה להגנת הטבע', loc:'📍 אתרי טבע ברחבי הארץ', desc:'פעילויות לנוער 12–17 — טיולים, לינות שדה ומסלולי הרפתקה.', badge:'לנוער 12–17'},
+  {color:'linear-gradient(135deg,#db2777,#ec4899)', date:'כל יולי 2026', name:'🎪 קיץ ירושלים — מופעים ושווקי לילה', loc:'📍 ירושלים | שטחים ציבוריים', desc:'מופעים חינמיים ושווקי לילה ברחבי ירושלים.', badge:'חינמי ברובו'}
+];
+
+const PRICES_STANDALONE = {
+  ashdod:{label:'אשדוד',adultOW:11},tlv:{label:'תל אביב',adultOW:16.5},
+  netanya:{label:'נתניה',adultOW:20},jerusalem:{label:'ירושלים',adultOW:26.5},
+  haifa:{label:'חיפה',adultOW:35},akko:{label:'עכו/נהריה',adultOW:40}
+};
+const DAY_PASS_A = 99, DAY_PASS_C = 49.5;
+
+// ═══════════════════════ STATE ═══════════════════════
+var profile = {travelers:[], address:'', station:'יבנה מזרח', extraMins:0};
+var selectedCity = null;
+var selectedStations = new Set();
+var useLightRail = false;
+var useBus = false;
+var obTravelers = [];
+var depMinsGlobal = 9*60;  // 9:00
+var retMinsGlobal = 19*60; // 19:00
+
+// ═══════════════════════ ONBOARDING ═══════════════════════
+function loadProfile() {
+  var saved = localStorage.getItem('trainApp2_profile');
+  if (saved) { try { profile = JSON.parse(saved); } catch(e){} }
+  if (!profile.travelers || !profile.travelers.length) {
+    showOnboarding();
+  } else {
+    hideOnboarding();
+    updateProfileChip();
+  }
+}
+
+function showOnboarding() {
+  document.getElementById('ob-overlay').classList.remove('hidden');
+  obTravelers = profile.travelers.length ? JSON.parse(JSON.stringify(profile.travelers)) : [{name:'',age:''}];
+  if (profile.address) document.getElementById('ob-address').value = profile.address;
+  renderObTravelers();
+  detectStation();
+}
+
+function hideOnboarding() { document.getElementById('ob-overlay').classList.add('hidden'); }
+function openProfile() { showOnboarding(); }
+
+function renderObTravelers() {
+  document.getElementById('ob-travelers').innerHTML = obTravelers.map(function(t,i){
+    return '<div class="ob-row">'
+      +'<input class="ob-inp nm" placeholder="שם" value="'+escHtml(t.name||'')+'" oninput="obTravelers['+i+'].name=this.value">'
+      +'<input class="ob-inp ag" type="number" min="0" max="120" placeholder="גיל" value="'+(t.age||'')+'" oninput="obTravelers['+i+'].age=parseInt(this.value)||0">'
+      +(obTravelers.length>1?'<button class="ob-del" onclick="removeTraveler('+i+')" aria-label="הסר">✕</button>':'')
+      +'</div>';
+  }).join('');
+}
+
+function addTraveler() { obTravelers.push({name:'',age:''}); renderObTravelers(); }
+function removeTraveler(i) { obTravelers.splice(i,1); renderObTravelers(); }
+
+function detectStation() {
+  var addr = (document.getElementById('ob-address').value || '').trim().toLowerCase();
+  var detect = document.getElementById('ob-station-detect');
+  var sel = document.getElementById('ob-station-sel');
+  if (!addr) { detect.textContent=''; return; }
+  var match = null;
+  for (var i=0; i<HOME_STATIONS.length; i++) {
+    var hs = HOME_STATIONS[i];
+    for (var j=0; j<hs.keywords.length; j++) {
+      if (addr.indexOf(hs.keywords[j].toLowerCase()) !== -1) { match = hs; break; }
+    }
+    if (match) break;
+  }
+  if (match) {
+    detect.textContent = '✅ זוהתה: '+match.station;
+    detect.style.color = 'var(--green)';
+    // Pre-select in dropdown
+    for (var k=0; k<sel.options.length; k++) {
+      if (sel.options[k].value.indexOf(match.station) !== -1) { sel.selectedIndex=k; break; }
+    }
+  } else {
+    detect.textContent = '📍 בחרי תחנה ידנית מהרשימה למטה';
+    detect.style.color = 'var(--orange)';
+  }
+}
+
+function getHomeStation(address) {
+  var addr = (address||'').toLowerCase();
+  for (var i=0; i<HOME_STATIONS.length; i++) {
+    var hs = HOME_STATIONS[i];
+    for (var j=0; j<hs.keywords.length; j++) {
+      if (addr.indexOf(hs.keywords[j].toLowerCase()) !== -1) return hs;
+    }
+  }
+  return {station:'יבנה מזרח', extraMins:0};
+}
+
+function saveProfile() {
+  var valid = obTravelers.filter(function(t){ return t.name && t.name.trim(); });
+  if (!valid.length) { alert('אנא הכנסי לפחות נוסע אחד עם שם'); return; }
+  var addr = document.getElementById('ob-address').value.trim();
+  var selVal = document.getElementById('ob-station-sel').value;
+  var parts = selVal.split('|');
+  profile.travelers = valid.map(function(t){ return {name:t.name.trim(), age:parseInt(t.age)||0}; });
+  profile.address = addr;
+  profile.station = parts[0];
+  profile.extraMins = parseInt(parts[1])||0;
+  localStorage.setItem('trainApp2_profile', JSON.stringify(profile));
+  hideOnboarding();
+  updateProfileChip();
+  if (selectedCity) updateCostPreview();
+}
+
+function updateProfileChip() {
+  var names = profile.travelers.map(function(t){ return t.name+(t.age?' ('+t.age+')':''); }).join(', ');
+  document.getElementById('profile-names').textContent = (names||'לחצי לעריכה') + (profile.station?' | '+profile.station:'');
+}
+
+function priceCategory(age) {
+  if (age<5) return 'free';
+  if (age<18) return 'child';
+  return 'adult';
+}
+
+// ═══════════════════════ TIME WINDOW ═══════════════════════
+function buildTimeOptions() {
+  var depSel = document.getElementById('dep-sel');
+  var retSel = document.getElementById('ret-sel');
+  var depHtml='', retHtml='';
+  for (var h=5; h<=13; h++) {
+    for (var m=0; m<60; m+=30) {
+      var label = (h<10?'0':'')+h+':'+(m===0?'00':'30');
+      var val = h*60+m;
+      var sel = (h===9&&m===0)?' selected':'';
+      depHtml += '<option value="'+val+'"'+sel+'>'+label+'</option>';
+    }
+  }
+  for (var h2=12; h2<=23; h2++) {
+    for (var m2=0; m2<60; m2+=30) {
+      var label2 = (h2<10?'0':'')+h2+':'+(m2===0?'00':'30');
+      var val2 = h2*60+m2;
+      var sel2 = (h2===19&&m2===0)?' selected':'';
+      retHtml += '<option value="'+val2+'"'+sel2+'>'+label2+'</option>';
+    }
+  }
+  depSel.innerHTML = depHtml;
+  retSel.innerHTML = retHtml;
+  onTimeChange();
+}
+
+function onTimeChange() {
+  depMinsGlobal = parseInt(document.getElementById('dep-sel').value);
+  retMinsGlobal = parseInt(document.getElementById('ret-sel').value);
+  var totalMins = retMinsGlobal - depMinsGlobal;
+  var avail = document.getElementById('time-avail');
+  var warn = document.getElementById('time-warn');
+  if (totalMins <= 0) {
+    avail.classList.remove('show');
+    warn.textContent = '⚠️ שעת החזרה קודמת ליציאה — בדקי שוב';
+    warn.classList.add('show');
+    return;
+  }
+  warn.classList.remove('show');
+  var h = Math.floor(totalMins/60), m = totalMins%60;
+  avail.textContent = '✅ זמן פנוי לטיול: '+h+' שעות'+(m?' ו-'+m+' דק׳':'')+'  (כולל נסיעה הלוך-חזור)';
+  avail.classList.add('show');
+  // refresh city grid if already shown
+  if (selectedCity === null && document.getElementById('city-grid').innerHTML) {
+    renderCityGrid();
+  } else if (selectedCity) {
+    renderCityGrid();
+    // keep selection
+    var btn = document.getElementById('city-btn-'+selectedCity);
+    if (btn) btn.classList.add('active');
+  }
+}
+
+function availableAtCity(cityKey) {
+  var totalMins = retMinsGlobal - depMinsGlobal;
+  var travelRT = (CITIES[cityKey].travelMins + (profile.extraMins||0)) * 2;
+  return totalMins - travelRT;
+}
+
+// ═══════════════════════ TABS ═══════════════════════
+function showTab(name, btn) {
+  document.querySelectorAll('.tc').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tb').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.getElementById('tc-'+name).classList.add('active');
+  btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+}
+
+// ═══════════════════════ CITY GRID ═══════════════════════
+function renderCityGrid() {
+  var wrap = document.getElementById('city-grid');
+  wrap.innerHTML = Object.keys(CITIES).map(function(key){
+    var c = CITIES[key];
+    var adultRT = c.adultOW*2;
+    var avail = availableAtCity(key);
+    var minViable = 60; // minimum 1 hour at destination
+    var fit = avail >= minViable;
+    var fitBadge = fit
+      ? '<div class="city-fit-badge">~'+Math.floor(avail/60)+'ש\' ביעד</div>'
+      : '<div class="city-nofit-badge">זמן קצר ⚠️</div>';
+    return '<button class="city-btn'+(fit?'':' disabled-city')+'" id="city-btn-'+key+'" onclick="selectCity(\''+key+'\')">'
+      +'<div class="city-emoji">'+c.emoji+'</div>'
+      +'<div class="city-name">'+c.label+'</div>'
+      +'<div class="city-meta">'+c.travel+'</div>'
+      +'<div class="city-price">₪'+adultRT.toFixed(0)+' הלוך-חזור</div>'
+      +fitBadge
+      +'</button>';
+  }).join('');
+}
+
+function selectCity(key) {
+  selectedCity = key;
+  selectedStations = new Set();
+  useLightRail = false;
+  useBus = false;
+  document.querySelectorAll('.city-btn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.getElementById('city-btn-'+key);
+  if (btn) btn.classList.add('active');
+  document.getElementById('builder-options').style.display = 'block';
+  document.getElementById('generated-route').innerHTML = '';
+  renderStations(key);
+  renderTransportToggles(key);
+  updateCostPreview();
+}
+
+// ═══════════════════════ STATIONS ═══════════════════════
+function renderStations(cityKey) {
+  var city = CITIES[cityKey];
+  var avail = availableAtCity(cityKey);
+  var wrap = document.getElementById('stations-list');
+  var cumTime = 0;
+  wrap.innerHTML = city.stations.map(function(sid){
+    var s = STATIONS[sid];
+    cumTime += s.visitTime;
+    var tooLong = cumTime > avail + 30;
+    var timeNote = s.visitTime>=60 ? '~'+(s.visitTime/60).toFixed(1).replace('.0','')+' שעות' : '~'+s.visitTime+' דק׳';
+    return '<label class="sta-item'+(s.optional?' optional-stop':'')+(tooLong?' too-long':'')+'" id="sta-item-'+sid+'">'
+      +(s.optional?'<div class="sta-opt-label">אופציונלי</div>':'')
+      +'<input type="checkbox" class="sta-cb" id="cb-'+sid+'" onchange="toggleStation(\''+sid+'\')"'+(s.optional?'':' checked')+'>'
+      +'<div>'
+        +'<div class="sta-name">'+s.name+'</div>'
+        +'<div class="sta-badge">'+s.badge+'</div>'
+        +'<div class="sta-count">'+s.nearby.length+' אטרקציות</div>'
+        +'<div class="sta-time">⏱ זמן מומלץ: '+timeNote+'</div>'
+      +'</div>'
+      +'</label>';
+  }).join('');
+  city.stations.forEach(function(sid){
+    if (!STATIONS[sid].optional) selectedStations.add(sid);
+  });
+  updateCostPreview();
+}
+
+function toggleStation(sid) {
+  var cb = document.getElementById('cb-'+sid);
+  var item = document.getElementById('sta-item-'+sid);
+  if (cb.checked) { selectedStations.add(sid); if(item) item.classList.add('checked'); }
+  else { selectedStations.delete(sid); if(item) item.classList.remove('checked'); }
+  updateCostPreview();
+}
+
+// ═══════════════════════ TRANSPORT ═══════════════════════
+function renderTransportToggles(cityKey) {
+  var city = CITIES[cityKey];
+  document.getElementById('transport-grid').innerHTML =
+    '<button class="trans-btn" id="trans-lr" onclick="toggleTransport(\'lr\')"'+(city.hasLR?'':' disabled title="לא זמין ביעד זה"')+'>'
+    +'<div class="trans-icon">🚊</div><div class="trans-name">רכבת קלה</div>'
+    +'<div class="trans-desc">'+(city.hasLR?'זמין ביעד זה':'לא זמין')+'</div></button>'
+    +'<button class="trans-btn" id="trans-bus" onclick="toggleTransport(\'bus\')">'
+    +'<div class="trans-icon">🚌</div><div class="trans-name">אוטובוסים</div>'
+    +'<div class="trans-desc">קווים מכל תחנה</div></button>';
+}
+
+function toggleTransport(type) {
+  if (type==='lr') {
+    useLightRail=!useLightRail;
+    var b=document.getElementById('trans-lr');
+    b.classList.toggle('active',useLightRail);
+    b.classList.toggle('lr-mode',useLightRail);
+  } else {
+    useBus=!useBus;
+    var b2=document.getElementById('trans-bus');
+    b2.classList.toggle('active',useBus);
+    b2.classList.toggle('bus-mode',useBus);
+  }
+}
+
+// ═══════════════════════ COST PREVIEW ═══════════════════════
+function calcTripCost(cityKey, type) {
+  var c=CITIES[cityKey]; if(!c) return 0;
+  var total=0;
+  profile.travelers.forEach(function(t){
+    var cat=priceCategory(t.age); if(cat==='free') return;
+    var ow=cat==='adult'?c.adultOW:c.adultOW*0.5;
+    if(type==='singles')    total+=ow*2;
+    else if(type==='mixed') total+=cat==='adult'?DAY_PASS_A:ow*2;
+    else                    total+=cat==='adult'?DAY_PASS_A:DAY_PASS_C;
+  });
+  return total;
+}
+
+function updateCostPreview() {
+  var wrap=document.getElementById('cost-preview-wrap');
+  if(!selectedCity||!profile.travelers.length){wrap.innerHTML='';return;}
+  var o1=calcTripCost(selectedCity,'singles'),o2=calcTripCost(selectedCity,'mixed'),o3=calcTripCost(selectedCity,'all');
+  var best=Math.min(o1,o2,o3);
+  var breakdowns=profile.travelers.map(function(t){
+    var cat=priceCategory(t.age);
+    if(cat==='free') return t.name+': חינם';
+    var ow=cat==='adult'?CITIES[selectedCity].adultOW:CITIES[selectedCity].adultOW*0.5;
+    return t.name+': ₪'+(ow*2).toFixed(0);
+  }).join(' | ');
+  var passNote='';
+  if(best<o1){
+    var save=(o1-best).toFixed(0);
+    passNote='💳 '+(o2<=o3?'חופשי יומי למבוגרים + כרטיסים לילדים':'חופשי יומי לכולם')+' — חוסך ₪'+save+'!';
+  }
+  wrap.innerHTML='<div class="cost-preview">'
+    +'<div class="cp-title">עלות משוערת ל-'+profile.travelers.length+' נוסעים</div>'
+    +'<div class="cp-row"><span>'+breakdowns+'</span></div>'
+    +'<div class="cp-total"><span>סה"כ הלוך-חזור:</span><span>₪'+best.toFixed(0)+'</span></div>'
+    +(passNote?'<div class="cp-pass">'+passNote+'</div>':'')
+    +'</div>';
+}
+
+// ═══════════════════════ GENERATE ROUTE ═══════════════════════
+function minsToStr(m) { var h=Math.floor(m/60)%24,mn=m%60; return(h<10?'0':'')+h+':'+(mn<10?'0':'')+mn; }
+
+function generateRoute() {
+  if(!selectedCity) return;
+  var city=CITIES[selectedCity];
+  var stids=Array.from(selectedStations).sort(function(a,b){return (STATIONS[a].arrOffset||0)-(STATIONS[b].arrOffset||0);});
+  if(!stids.length){alert('בחרי לפחות תחנה אחת');return;}
+
+  var travelRT=(city.travelMins+(profile.extraMins||0))*2;
+  var avail=retMinsGlobal-depMinsGlobal-travelRT;
+  var totalVisit=stids.reduce(function(s,id){return s+STATIONS[id].visitTime;},0);
+
+  var travNames=profile.travelers.map(function(t){return t.name;}).join(', ');
+  var depStr=minsToStr(depMinsGlobal);
+  var retStr=minsToStr(retMinsGlobal);
+  var arrDest=minsToStr(depMinsGlobal+(city.travelMins+(profile.extraMins||0)));
+  var depHome=minsToStr(retMinsGlobal-(city.travelMins+(profile.extraMins||0)));
+
+  var o1=calcTripCost(selectedCity,'singles'),o2=calcTripCost(selectedCity,'mixed'),o3=calcTripCost(selectedCity,'all');
+  var best=Math.min(o1,o2,o3);
+
+  var timeOk=avail>=totalVisit-30;
+  var timeNote=timeOk
+    ?'✅ הזמן מתאים — '+Math.floor(avail/60)+' שעות ביעד עבור '+stids.length+' תחנות'
+    :'⚠️ הזמן קצת צפוף — שקלי להוריד תחנה אחת';
+
+  var html='<div class="gen-header">'
+    +'<div class="gen-h-title">'+city.emoji+' יום ב'+city.label+' — '+travNames+'</div>'
+    +'<div class="gen-h-meta">מ-'+profile.station+' | '+stids.length+' תחנות | '+city.travel+'</div>'
+    +'<div class="gen-h-window">🕐 יציאה '+depStr+' מהבית → הגעה ~'+arrDest+' | יציאה מהיעד ~'+depHome+' → חזרה '+retStr+'</div>'
+    +(city.event?'<div class="gen-h-note">⭐ '+city.event+'</div>':'')
+    +'<div class="gen-h-note" style="background:rgba(255,255,255,.05);margin-top:5px;">'+timeNote+'</div>'
+    +'</div>';
+
+  html+=stids.map(function(sid,idx){
+    var s=STATIONS[sid];
+    var arrMins=depMinsGlobal+(city.travelMins+(profile.extraMins||0))+(s.arrOffset-CITIES[selectedCity].stations.map(function(x){return STATIONS[x].arrOffset||0;})[0]);
+    // Build walking route
+    function parseWalkMins(w){
+      var m=w.match(/(\d+)/);
+      return m?parseInt(m[1]):99;
+    }
+    var sorted=[].concat(s.nearby).sort(function(a,b){return parseWalkMins(a.walk)-parseWalkMins(b.walk);});
+    var wrNodes='<div class="wr-node"><div class="wr-dot gold">🚉</div><div class="wr-label">תחנה</div></div>';
+    var prevMins=0;
+    sorted.forEach(function(n,i){
+      var cur=parseWalkMins(n.walk);
+      var diff=cur-prevMins; prevMins=cur;
+      var diffTxt=diff<=0?n.walk:diff+' דק׳';
+      var shortName=n.name.length>8?n.name.substring(0,7)+'…':n.name;
+      wrNodes+='<div class="wr-arrow"><div class="wr-line"></div><div class="wr-time">'+diffTxt+'</div></div>'
+        +'<div class="wr-node"><div class="wr-dot">'+(i+1)+'</div><div class="wr-label">'+shortName+'</div></div>';
+    });
+    var walkRouteHtml='<div class="walk-route"><div class="wr-title">🗺️ מסלול הליכה מהתחנה</div><div class="wr-flow">'+wrNodes+'</div></div>';
+
+    var nearby=s.nearby.map(function(n){
+      var stars=n.rating?'⭐ '+n.rating:'';
+      var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
+      return '<div class="nearby-item">'
+        +'<div class="ni-walk">'+n.walk+'</div>'
+        +'<div class="ni-body">'
+          +'<div class="ni-name">'+n.name+'</div>'
+          +'<div class="ni-desc">'+n.desc+'</div>'
+          +'<div class="ni-actions">'
+            +'<span class="ni-price">'+n.price+'</span>'
+            +(stars?'<span class="ni-rating">'+stars+'</span>':'')
+            +mapBtn
+          +'</div>'
+        +'</div></div>';
+    }).join('');
+
+    var restaurants='';
+    if(s.restaurants&&s.restaurants.length){
+      var restItems=s.restaurants.map(function(r){
+        var rStars=r.rating?'⭐ '+r.rating:'';
+        var rMap=r.mapUrl?'<a class="rest-map" href="'+r.mapUrl+'" target="_blank">📍 מפה</a>':'';
+        return '<div class="rest-item">'
+          +'<div class="rest-walk">'+r.walk+'</div>'
+          +'<div class="rest-body">'
+            +'<div class="rest-name">'+r.name+' <span class="rest-type">· '+r.type+'</span></div>'
+            +'<div class="rest-meta">'
+              +(rStars?'<span class="rest-rating">'+rStars+'</span>':'')
+              +'<span class="rest-price">'+r.price+'</span>'
+              +rMap
+            +'</div>'
+            +'<div class="rest-desc">'+r.desc+'</div>'
+          +'</div></div>';
+      }).join('');
+      restaurants='<div class="rest-section"><div class="rest-head">🍽️ מסעדות ובתי קפה באזור</div>'+restItems+'</div>';
+    }
+
+    var lrHtml='';
+    if(useLightRail){
+      if(s.lr&&s.lr.length){
+        var lrItems=s.lr.map(function(lid){
+          var lr=LIGHT_RAIL[lid]; if(!lr) return '';
+          return '<div style="margin-bottom:5px;"><div style="font-size:.72rem;font-weight:700;color:'+lr.color+';margin-bottom:2px;">🚊 '+lr.name+' ('+lr.line+')</div>'
+            +lr.dests.map(function(d){return '<div class="lr-item">'+d+'</div>';}).join('')
+            +'</div>';
+        }).join('');
+        lrHtml='<div class="lr-section"><div class="lr-head"><div class="lr-ico">🚊</div><div class="lr-title">חיבורי רכבת קלה</div></div>'+lrItems+'</div>';
+      } else {
+        lrHtml='<div class="lr-section"><div class="lr-head"><div class="lr-ico" style="background:var(--muted);">?</div><div class="lr-title" style="color:var(--muted);">אין רכבת קלה בתחנה זו</div></div></div>';
+      }
+    }
+    var busHtml=useBus&&s.bus?'<div class="bus-section"><div class="bus-head"><div class="bus-ico">🚌</div><div class="bus-title">קווי אוטובוס</div></div><div class="bus-tip">'+s.bus+'</div></div>':'';
+
+    return '<div class="sta-card">'
+      +'<div class="sta-head">'
+        +'<div class="sta-num">'+(idx+1)+'</div>'
+        +'<div class="sta-body">'
+          +'<div class="sta-title-row"><div class="sta-title">'+s.name+'</div>'
+          +'<div class="sta-arr">הגעה ~'+minsToStr(arrMins)+'</div></div>'
+          +'<div class="sta-badge">'+s.badge+' · זמן מומלץ: ~'+Math.floor(s.visitTime/60)+'ש\'</div>'
+        +'</div>'
+      +'</div>'
+      +walkRouteHtml
+      +'<div class="nearby-list">'+nearby+'</div>'
+      +restaurants
+      +lrHtml+busHtml
+      +'</div>';
+  }).join('');
+
+  // Cost
+  var opts=[
+    {name:'כרטיסים בודדים הלוך-חזור',total:o1},
+    {name:'חופשי יומי למבוגרים + כרטיסים לילדים',total:o2},
+    {name:'חופשי יומי לכולם',total:o3}
+  ];
+  html+='<div class="cost-result">'
+    +'<div class="cr-title">עלויות לטיול</div>'
+    +opts.map(function(o){
+      var ib=Math.abs(o.total-best)<.01;
+      return '<div class="cr-opt'+(ib?' best':'')+'">'
+        +'<div class="cr-opt-top"><span class="cr-name">'+o.name+'</span>'+(ib?'<span class="cr-rec">✅ הכי משתלם</span>':'')+'</div>'
+        +'<div class="cr-total">₪'+o.total.toFixed(0)+'</div></div>';
+    }).join('')
+    +'<div class="cr-note">* משוער | ילדים עד 5 חינם | rail.co.il</div>'
+    +'</div>';
+
+  html+='<button onclick="document.getElementById(\'generated-route\').innerHTML=\'\'" style="width:100%;background:var(--border);color:var(--navy);border:none;padding:12px;border-radius:10px;font-family:Heebo,sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;margin-top:8px;min-height:44px;">← שני מסלול אחר</button>';
+
+  document.getElementById('generated-route').innerHTML=html;
+  document.getElementById('generated-route').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════ EVENTS ═══════════════════════
+function renderEvents() {
+  document.getElementById('events-wrap').innerHTML=EVENTS.map(function(e){
+    return '<article class="ev-card" style="background:'+e.color+'">'
+      +'<p class="ev-date">'+e.date+'</p><h3 class="ev-name">'+e.name+'</h3>'
+      +'<p class="ev-loc">'+e.loc+'</p><p class="ev-desc">'+e.desc+'</p>'
+      +'<span class="ev-badge">'+e.badge+'</span></article>';
+  }).join('');
+}
+
+// ═══════════════════════ CALCULATOR ═══════════════════════
+function calcStandalone() {
+  var destKey=document.getElementById('sel-dest').value;
+  var adults=parseInt(document.getElementById('sel-adults').value);
+  var kids=parseInt(document.getElementById('sel-kids').value);
+  if(!destKey){alert('בחרי יעד קודם');return;}
+  var p=PRICES_STANDALONE[destKey],aOW=p.adultOW,cOW=aOW*0.5;
+  var o1=adults*aOW*2+kids*cOW*2,o2=adults*DAY_PASS_A+kids*cOW*2,o3=adults*DAY_PASS_A+kids*DAY_PASS_C;
+  var best=Math.min(o1,o2,o3);
+  var opts=[
+    {name:'כרטיסים בודדים',brk:adults+'×₪'+(aOW*2).toFixed(0)+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o1},
+    {name:'חופשי למבוגרים + כרטיסים לילדים',brk:adults+'×₪'+DAY_PASS_A+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o2},
+    {name:'חופשי יומי לכולם',brk:adults+'×₪'+DAY_PASS_A+' + '+kids+'×₪'+DAY_PASS_C,total:o3}
+  ];
+  document.getElementById('calc-result').innerHTML=
+    '<div class="result-wrap"><div class="result-head">ל'+p.label+' ('+adults+' מבוגר + '+kids+' ילדים):</div>'
+    +opts.map(function(o){var ib=Math.abs(o.total-best)<.01;
+      return '<div class="opt-card'+(ib?' best':'')+'">'
+        +'<div class="opt-top"><span class="opt-name">'+o.name+'</span>'+(ib?'<span class="opt-rec">✅ הכי משתלם</span>':'')+'</div>'
+        +'<div class="opt-break">'+o.brk+'</div>'
+        +'<div class="opt-total">₪'+o.total.toFixed(0)+' סה"כ</div></div>';
+    }).join('')
+    +'<div style="font-size:.68rem;color:#94a3b8;text-align:center;margin-top:5px;">* ילדים עד 5 חינם | rail.co.il</div></div>';
+  document.getElementById('calc-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══════════════════════ HOURS BAR ═══════════════════════
+function renderHoursBar() {
+  var bar=document.getElementById('hours-bar'),segs=[];
+  for(var h=5;h<=21;h++){
+    var bg=((h>=6&&h<9)||(h>=16&&h<19))?'#e74c3c':(h<6||h>=19)?'#D97706':'#27ae60';
+    segs.push('<div class="h-seg" style="background:'+bg+'" title="'+h+':00–'+(h+1)+':00"></div>');
+  }
+  bar.innerHTML=segs.join('');
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ═══════════════════════ INIT ═══════════════════════
+buildTimeOptions();
+renderCityGrid();
+renderEvents();
+renderHoursBar();
+loadProfile();
+</script>
+</body>
+</html>
