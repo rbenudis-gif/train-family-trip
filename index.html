@@ -489,7 +489,7 @@ const HOME_STATIONS = [
 
 const CITIES = {
   ashdod:    {label:'אשדוד',    emoji:'🏖️', adultOW:21,   dayPassA:32.5, travel:'15 דק׳ ישיר!', travelMins:15, diff:'קל מאוד',  stations:['ashdod_yam'], hasLR:false, event:null},
-  tlv:       {label:'תל אביב', emoji:'🏙️', adultOW:27,   dayPassA:42,   travel:'35 דק׳',        travelMins:35, diff:'קל',        stations:['tlv_hagana','tlv_hashalom','tlv_savidor','tlv_university'], hasLR:true,  event:'🎭 פסטיבל קיץ סוזן דלאל — כל יולי!'},
+  tlv:       {label:'תל אביב', emoji:'🏙️', adultOW:27,   dayPassA:42,   travel:'35 דק׳',        travelMins:35, diff:'קל',        stations:['tlv_hagana','tlv_hashalom','tlv_university'], hasLR:true,  event:'🎭 פסטיבל קיץ סוזן דלאל — כל יולי!'},
   jerusalem: {label:'ירושלים', emoji:'🏛️', adultOW:30.5, dayPassA:47,   travel:'70 דק׳',        travelMins:70, diff:'בינוני',   stations:['jlm_navon'], hasLR:true,  event:'🎼 פסטיבל ישראל ה-65 — מ-28 יולי!'},
   haifa:     {label:'חיפה',    emoji:'🏔️', adultOW:30.5, dayPassA:47,   travel:'90 דק׳',        travelMins:90, diff:'בינוני',   stations:['binyamina','hf_bat_galim','hf_shamona','hf_mifratz'], hasLR:false, event:null},
   akko:      {label:'עכו',     emoji:'⚓', adultOW:52.5, dayPassA:80.5, travel:'120 דק׳',       travelMins:120,diff:'יום ארוך', stations:['akko'], hasLR:false, event:null}
@@ -552,11 +552,6 @@ const STATIONS = {
       {name:'מסעדות שרונה', type:'גורמה', walk:'12 דק׳', rating:'4.5', price:'₪₪₪', desc:'מגוון רחב של מסעדות שף בשרונה מרקט. מהמבורגר ועד סושי — הכל ברמה גבוהה. מומלץ לאכול שם.', mapUrl:'https://maps.google.com/?q=שרונה+מרקט+תל+אביב'},
     ],
     lr:['lr_azrieli'],bus:'קו 63, 180 לדיזנגוף | קו 40 לנווה צדק'},
-
-  tlv_savidor:{name:'ת"א מרכז-סבידור',badge:'תחנת מעבר מרכזית',optional:true,arrOffset:40,visitTime:60,
-    nearby:[],
-    restaurants:[],
-    lr:['lr_central'],bus:'קו 5 לחוף גורדון (10 דק׳) | קו 22 לדיזנגוף (8 דק׳) | קו 40 לנווה צדק (15 דק׳)'},
 
   tlv_university:{name:'ת"א-אוניברסיטה',badge:'רמת אביב + קניון',optional:false,arrOffset:45,visitTime:90,
     nearby:[
@@ -694,7 +689,6 @@ const STATIONS = {
 const LIGHT_RAIL = {
   lr_hagana:    {name:'הגנה',           line:'Purple Line ת"א', color:'#7c3aed', dests:['ליפו עתיקה — 3 תחנות','לפלורנטין — תחנה','לשוק הפשפשים — 4 תחנות']},
   lr_azrieli:   {name:'עזריאלי',        line:'Purple Line ת"א', color:'#7c3aed', dests:['לשדרות רוטשילד — 5 דק׳ הליכה','לכיכר רבין — 3 תחנות','לדיזנגוף — 4 תחנות']},
-  lr_central:   {name:'תחנה מרכזית',   line:'Purple Line ת"א', color:'#7c3aed', dests:['לשוק הפשפשים — תחנה','ליפו — 3 תחנות']},
   lr_university:{name:'אוניברסיטה',    line:'Purple Line ת"א', color:'#7c3aed', dests:['לבני ברק — 4 תחנות','לפתח תקווה — קצה הקו']},
   jlm_lr_jaffa: {name:'מחנה יהודה',   line:'Red Line ירושלים', color:'#e74c3c', dests:['ישר בכניסה לשוק!','לעיר העתיקה — 3 תחנות']},
   jlm_lr_market:{name:'רחוב יפו/עיר עתיקה', line:'Red Line ירושלים', color:'#e74c3c', dests:['לשער יפו — 10 דק׳','לכיכר יפו — 5 דק׳']}
