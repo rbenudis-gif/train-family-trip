@@ -186,6 +186,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .ni-body{flex:1;}
 .ni-name{font-size:.82rem;font-weight:700;color:var(--navy);}
 .ni-desc{font-size:.7rem;color:var(--muted);margin-top:1px;line-height:1.35;}
+.sub-det{margin-top:5px;}
+.sub-sum{font-size:.63rem;font-weight:700;color:var(--navy);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:4px;background:#f0f4ff;border-radius:8px;padding:2px 8px;border:1px solid #c7d2fe;}
+.sub-sum::-webkit-details-marker{display:none;}
+.sub-det[open] .sub-sum{background:#e8edff;}
 .sub-stops{margin-top:5px;padding-right:8px;border-right:2px dashed var(--gold);}
 .sub-stop{display:flex;gap:5px;align-items:flex-start;padding:2px 0;}
 .sub-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
@@ -1275,9 +1279,10 @@ function generateRoute() {
       var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
       var subHtml='';
       if(n.subStops&&n.subStops.length){
-        subHtml='<div class="sub-stops">'+n.subStops.map(function(ss,i){
-          return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(i+1)+'. '+ss.name+'</div></div>';
-        }).join('')+'</div>';
+        subHtml='<details class="sub-det"><summary class="sub-sum">🗺️ מסלול מפורט — '+n.subStops.length+' עצירות</summary>'
+          +'<div class="sub-stops">'+n.subStops.map(function(ss,i){
+            return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(i+1)+'. '+ss.name+'</div></div>';
+          }).join('')+'</div></details>';
       }
       return '<div class="nearby-item">'
         +'<div class="ni-walk">'+n.walk+'</div>'
