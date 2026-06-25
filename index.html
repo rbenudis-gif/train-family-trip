@@ -1127,7 +1127,7 @@ function buildScheduleHtml(s, startTime, state) {
     opts = opts||{};
     items.push({type:type, time:t, label:label, duration:duration,
       detail:opts.detail||'', walk:opts.walk||'', price:opts.price||'',
-      rating:opts.rating||'', mapUrl:opts.mapUrl||''});
+      rating:opts.rating||'', mapUrl:opts.mapUrl||'', subStops:opts.subStops||[]});
     t += duration;
   }
 
@@ -1170,7 +1170,8 @@ function buildScheduleHtml(s, startTime, state) {
     add('attraction', attr.name, 30, {
       detail: shortDesc,
       walk: i===0 ? attr.walk : '~8 דק׳ מהקודם',
-      price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl
+      price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl,
+      subStops: attr.subStops||[]
     });
   });
 
@@ -1207,6 +1208,12 @@ function buildScheduleHtml(s, startTime, state) {
     html += '<div class="sched-label">'+item.label+'</div>';
     if(item.walk) html+='<div class="sched-walk">🚶 '+item.walk+'</div>';
     if(item.detail) html+='<div class="sched-detail">'+item.detail+'</div>';
+    if(item.subStops&&item.subStops.length){
+      html+='<details class="sub-det"><summary class="sub-sum">🗺️ '+item.subStops.length+' עצירות במסלול</summary>'
+        +'<div class="sub-stops">'+item.subStops.map(function(ss,si){
+          return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(si+1)+'. '+ss.name+'</div></div>';
+        }).join('')+'</div></details>';
+    }
     html+='<div class="sched-meta">';
     if(item.price) html+='<span class="sched-price">'+item.price+'</span>';
     if(item.rating) html+='<span class="sched-rating">⭐ '+item.rating+'</span>';
@@ -1277,19 +1284,11 @@ function generateRoute() {
     var nearby=s.nearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
       var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
-      var subHtml='';
-      if(n.subStops&&n.subStops.length){
-        subHtml='<details class="sub-det"><summary class="sub-sum">🗺️ מסלול מפורט — '+n.subStops.length+' עצירות</summary>'
-          +'<div class="sub-stops">'+n.subStops.map(function(ss,i){
-            return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(i+1)+'. '+ss.name+'</div></div>';
-          }).join('')+'</div></details>';
-      }
       return '<div class="nearby-item">'
         +'<div class="ni-walk">'+n.walk+'</div>'
         +'<div class="ni-body">'
           +'<div class="ni-name">'+n.name+'</div>'
           +'<div class="ni-desc">'+n.desc+'</div>'
-          +subHtml
           +'<div class="ni-actions">'
             +'<span class="ni-price">'+n.price+'</span>'
             +(stars?'<span class="ni-rating">'+stars+'</span>':'')
