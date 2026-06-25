@@ -1162,7 +1162,7 @@ function buildScheduleHtml(s, arrMins) {
     html+='</div></div></div>';
   });
   html+='</div>';
-  return html;
+  return {html: html, endTime: t};
 }
 
 function generateRoute() {
@@ -1197,10 +1197,30 @@ function generateRoute() {
     +'<div class="gen-h-note" style="background:rgba(255,255,255,.05);margin-top:5px;">'+timeNote+'</div>'
     +'</div>';
 
+  var firstOffset = STATIONS[stids[0]].arrOffset || 0;
+  var prevStationEndTime = -1;
+  var prevSid = null;
+
   html+=stids.map(function(sid,idx){
     var s=STATIONS[sid];
-    var arrMins=depMinsGlobal+(city.travelMins+(profile.extraMins||0))+(s.arrOffset-CITIES[selectedCity].stations.map(function(x){return STATIONS[x].arrOffset||0;})[0]);
-    var walkRouteHtml = buildScheduleHtml(s, arrMins);
+    // זמן הגעת הרכבת לתחנה זו
+    var trainArrMins = depMinsGlobal + (city.travelMins + (profile.extraMins||0)) + (s.arrOffset - firstOffset);
+
+    // startTime: אם יש תחנה קודמת — המשיך מסיומה + נסיעה בין תחנות
+    var startTime;
+    if (idx === 0 || prevStationEndTime < 0) {
+      startTime = trainArrMins;
+    } else {
+      var interMins = (s.arrOffset - STATIONS[prevSid].arrOffset) + 5; // נסיעה + המתנה
+      startTime = Math.max(trainArrMins, prevStationEndTime + interMins);
+    }
+
+    var schedResult = buildScheduleHtml(s, startTime);
+    prevStationEndTime = schedResult.endTime;
+    prevSid = sid;
+
+    var arrMins = startTime; // לכותרת התחנה
+    var walkRouteHtml = schedResult.html;
 
     var nearby=s.nearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
