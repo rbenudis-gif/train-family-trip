@@ -1313,16 +1313,16 @@ function toggleTrainPanel(sid, btn) {
   btn.classList.toggle('active', !open);
 }
 
-async function loadTrainsManual(fromId, toId, inputId, containerId, btn) {
-  var hour = document.getElementById(inputId).value || '08:00';
+async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containerId, btn) {
+  var hour = document.getElementById(timeInputId).value || '08:00';
+  var date = document.getElementById(dateInputId).value || new Date().toISOString().slice(0,10);
   btn.disabled = true; btn.textContent = '⏳';
-  var today = new Date().toISOString().slice(0,10);
   try {
     var res = await fetch(TRAINS_PROXY, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({methodName:'searchTrainLuzForDateTime',
         fromStation:String(fromId), toStation:String(toId),
-        date:today, hour:hour, systemType:'2',
+        date:date, hour:hour, systemType:'2',
         scheduleType:'ByDeparture', languageId:'Hebrew'})
     });
     var data = await res.json();
@@ -1486,12 +1486,14 @@ function generateRoute() {
       var suggestedHour = minsToStr(Math.max(0, arrMins - 30));
       var tcId = 'tr-'+sid, tiId = 'ti-'+sid;
       trainToggleBtn = '<button class="train-toggle-btn" onclick="toggleTrainPanel(\''+sid+'\',this)">🚂 זמנים</button>';
+      var tdId = 'td-'+sid;
       trainHtml = '<div class="train-panel" id="tp-'+sid+'" style="display:none;">'
         +'<div class="tp-from">מ: <b>'+fromName+'</b> → <b>'+s.name+'</b></div>'
-        +'<div class="tp-label">בחרי שעת יציאה לקבלת 3 אופציות:</div>'
+        +'<div class="tp-label">בחרי תאריך ושעת יציאה לקבלת 3 אופציות:</div>'
         +'<div class="tp-row">'
+          +'<input type="date" id="'+tdId+'" class="tp-time" style="width:135px;" value="'+new Date().toISOString().slice(0,10)+'">'
           +'<input type="time" id="'+tiId+'" class="tp-time" value="'+suggestedHour+'">'
-          +'<button class="tp-btn" onclick="loadTrainsManual('+fromRailId+','+toRailId+',\''+tiId+'\',\''+tcId+'\',this)">חפש</button>'
+          +'<button class="tp-btn" onclick="loadTrainsManual('+fromRailId+','+toRailId+',\''+tiId+'\',\''+tdId+'\',\''+tcId+'\',this)">חפש</button>'
         +'</div>'
         +'<div class="train-results" id="'+tcId+'"></div>'
         +'</div>';
