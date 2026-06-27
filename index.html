@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>טיול ברכבת 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   --navy:#1a1a2e;--navy2:#0f1729;
@@ -260,11 +262,14 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .tt-item{background:#ede9fe;color:#5b21b6;border-radius:4px;padding:2px 7px;display:inline-block;margin:2px 2px;font-size:.71rem;font-weight:600;}
 .tt-hint{font-size:.65rem;color:#9ca3af;margin-top:6px;}
 .ni-transit{display:inline-block;background:#ddd6fe;color:#5b21b6;font-size:.6rem;font-weight:700;border-radius:3px;padding:1px 5px;margin-right:4px;vertical-align:middle;}
-.sta-map-wrap{margin:10px 13px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border);position:relative;}
-.sta-map-wrap iframe{display:block;width:100%;height:185px;border:0;}
+.sta-map-wrap{margin:10px 13px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border);height:195px;}
+.sta-map-wrap .leaflet-container{height:195px;font-family:'Heebo',sans-serif;}
+.map-pin-st{font-size:22px;line-height:1;}
+.map-pin-at{font-size:17px;line-height:1;}
 .map-route-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);color:var(--navy);border:1.5px solid var(--gold);border-radius:8px;padding:8px 12px;font-size:.78rem;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;text-decoration:none;margin:6px 13px 2px;min-height:38px;}
 .map-route-btn:hover{background:var(--gold);color:var(--navy);}
 .no-transit-note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin:6px 13px;font-size:.72rem;color:#92400e;line-height:1.45;}
+.transit-how{background:#eff6ff;border-right:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:5px 8px;margin-top:5px;font-size:.7rem;color:#1d4ed8;line-height:1.5;}
 
 .cost-result{background:linear-gradient(135deg,#1a1a2e,#0f1729);border-radius:14px;padding:14px;margin-top:10px;}
 .cr-title{font-size:.7rem;color:var(--gold);font-weight:700;letter-spacing:.8px;margin-bottom:9px;}
@@ -504,6 +509,55 @@ const CITIES = {
   jerusalem: {label:'ירושלים', emoji:'🏛️', adultOW:30.5, dayPassA:47,   travel:'70 דק׳',        travelMins:70, diff:'בינוני',   stations:['jlm_navon'], hasLR:true,  event:'🎼 פסטיבל ישראל ה-65 — מ-28 יולי!'},
   haifa:     {label:'חיפה',    emoji:'🏔️', adultOW:30.5, dayPassA:47,   travel:'90 דק׳',        travelMins:90, diff:'בינוני',   stations:['binyamina','hf_bat_galim','hf_shamona','hf_mifratz'], hasLR:false, event:null},
   akko:      {label:'עכו',     emoji:'⚓', adultOW:52.5, dayPassA:80.5, travel:'120 דק׳',       travelMins:120,diff:'יום ארוך', stations:['akko'], hasLR:false, event:null}
+};
+
+// קואורדינטות לאטרקציות (לפי שם) — לשימוש במפת Leaflet
+const ATTR_COORDS = {
+  'חוף אשדוד':             [31.8026,34.6455],
+  'טיילת אשדוד':           [31.8016,34.6438],
+  'קניון הים':             [31.8009,34.6415],
+  'שוק לוינסקי':           [32.0597,34.7688],
+  'שוק התקווה':            [32.0563,34.7839],
+  'מגדלי עזריאלי':         [32.0748,34.7916],
+  'שרונה מרקט':            [32.0660,34.7882],
+  'קניון עופר רמת אביב':   [32.1142,34.8155],
+  'שביל נחל עדה':          [32.5195,34.9455],
+  'מושבת בנימינה':         [32.5244,34.9512],
+  'יקב זיכרון יעקב':       [32.5603,34.9505],
+  'חוף בת גלים':           [32.8241,34.9690],
+  'טיילת בת גלים':         [32.8262,34.9718],
+  'רכבל כרמל אייר':        [32.8284,34.9749],
+  'ואדי ניסנאס':            [32.8138,35.0000],
+  'מושבה גרמנית':          [32.8089,34.9876],
+  'כרמלית חיפה':           [32.8142,34.9986],
+  'רכבלית חיפה':           [32.8225,35.0271],
+  'אוניברסיטת חיפה — תצפית':[32.8119,35.0003],
+  'מדעטק — מוזיאון המדע':  [32.8201,34.9942],
+  'שוק מחנה יהודה':        [31.7871,35.2127],
+  'רחוב יפו + בן יהודה':   [31.7842,35.2158],
+  'מוזיאון המדע (Bloomfield)':[31.7754,35.2003],
+  'עיר עתיקה':             [31.7764,35.2270],
+  'מנהרות הצלבנים':        [32.9277,35.0693],
+  'שוק עכו העתיק':         [32.9270,35.0700],
+  'נמל הדייגים':           [32.9260,35.0673],
+  'חוף הנמל':              [32.9251,35.0665]
+};
+
+// הסברי תחבורה ציבורית לכל אטרקציה transit
+const TRANSIT_HOW = {
+  'יקב זיכרון יעקב':      'קו 921 מהתחנה → 10 דק׳ → יקב כרמי זיכרון יעקב',
+  'רכבל כרמל אייר':       'קו 45 → תחנת רכבל בת גלים (10 דק׳) → רכבל לפסגת הכרמל',
+  'מושבה גרמנית':         'קו 45 מהתחנה → 8 דק׳ → עצור בשדרות בן גוריון',
+  'כרמלית חיפה':          'קו 37 מהתחנה → 10 דק׳ → תחנת הכרמלית התחתית (רח׳ הנביאים)',
+  'מדעטק — מוזיאון המדע': 'קו 37 מהתחנה → 12 דק׳ → תחנת מדעטק (רח׳ שדרות העצמאות)',
+  'שוק מחנה יהודה':       'רכבת קלה אדומה — 2 תחנות מנבון → תחנת "מחנה יהודה" (~4 דק׳)',
+  'רחוב יפו + בן יהודה':  'רכבת קלה אדומה — 3 תחנות מנבון → תחנת "ציון" (~5 דק׳)',
+  'מוזיאון המדע (Bloomfield)':'קו 74 מהתחנה → 5 דק׳ → תחנת "גבריאלי" + 8 דק׳ הליכה',
+  'עיר עתיקה':            'רכבת קלה אדומה — 5 תחנות → תחנת "שוק" (~8 דק׳) + 5 דק׳ הליכה לשער יפו',
+  'מנהרות הצלבנים':       'קו 271/272 מהתחנה → 5 דק׳ → כיכר אל-ג׳זאר → 5 דק׳ הליכה לכניסה',
+  'שוק עכו העתיק':        'קו 271/272 מהתחנה → 5 דק׳ → רחוב ואיזה → 5 דק׳ הליכה לשוק',
+  'נמל הדייגים':          'קו 271/272 מהתחנה → 5 דק׳ + 12 דק׳ הליכה לאורך הנמל',
+  'חוף הנמל':             'קו 271/272 מהתחנה → 5 דק׳ + 12 דק׳ הליכה לאורך החומה'
 };
 
 // visitTime = recommended time at station in minutes
@@ -1264,12 +1318,15 @@ function generateRoute() {
     var nearby=visibleNearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
       var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
+      var howText = n.how || TRANSIT_HOW[n.name] || '';
       var transitTag = n.transit ? '<span class="ni-transit">🚌 תחבורה ציבורית</span>' : '';
+      var howHtml = (n.transit && howText) ? '<div class="transit-how">🚌 <b>איך מגיעים:</b> '+howText+'</div>' : '';
       return '<div class="nearby-item">'
         +'<div class="ni-walk">'+n.walk+'</div>'
         +'<div class="ni-body">'
           +'<div class="ni-name">'+transitTag+n.name+'</div>'
           +'<div class="ni-desc">'+n.desc+'</div>'
+          +howHtml
           +'<div class="ni-actions">'
             +'<span class="ni-price">'+n.price+'</span>'
             +(stars?'<span class="ni-rating">'+stars+'</span>':'')
@@ -1324,14 +1381,12 @@ function generateRoute() {
     }
     var busHtml=useBus&&s.bus?'<div class="bus-section"><div class="bus-head"><div class="bus-ico">🚌</div><div class="bus-title">קווי אוטובוס</div></div><div class="bus-tip">'+s.bus+'</div></div>':'';
 
-    // מפת האזור
+    // מפת Leaflet
     var mapHtml = '';
     if (s.coords) {
-      var mLat = s.coords[0], mLng = s.coords[1];
-      var mapSrc = 'https://maps.google.com/maps?q='+mLat+','+mLng+'&z=15&hl=he&output=embed';
-      var routeUrl = 'https://www.google.com/maps/@'+mLat+','+mLng+',15z';
-      mapHtml = '<div class="sta-map-wrap"><iframe src="'+mapSrc+'" loading="lazy" allowfullscreen></iframe></div>'
-        +'<a class="map-route-btn" href="'+routeUrl+'" target="_blank">🗺️ פתח מפה באזור התחנה</a>';
+      var gUrl = 'https://www.google.com/maps/@'+s.coords[0]+','+s.coords[1]+',16z';
+      mapHtml = '<div id="leafmap-'+sid+'" class="sta-map-wrap"></div>'
+        +'<a class="map-route-btn" href="'+gUrl+'" target="_blank">🗺️ פתח מפה מורחבת ב-Google Maps</a>';
     }
 
     return '<div class="sta-card">'
@@ -1405,6 +1460,16 @@ function generateRoute() {
 
   document.getElementById('generated-route').innerHTML=html;
   document.getElementById('generated-route').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // אתחל מפות Leaflet אחרי DOM
+  var useTransitMap = useLightRail || useBus;
+  setTimeout(function(){
+    selectedStations.forEach(function(sid){
+      var st = STATIONS[sid]; if(!st||!st.coords) return;
+      var vis = st.nearby.filter(function(a){ return !a.transit || useTransitMap; });
+      initStationMap('leafmap-'+sid, st, vis);
+    });
+  }, 80);
 }
 
 // ═══════════════════════ EVENTS ═══════════════════════
@@ -1454,6 +1519,47 @@ function renderHoursBar() {
 }
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ═══════════════════════ MAP ═══════════════════════
+var _mapInst = {};
+function initStationMap(mapId, station, visAttrs) {
+  if (_mapInst[mapId]) { try{_mapInst[mapId].remove();}catch(e){} delete _mapInst[mapId]; }
+  var el = document.getElementById(mapId);
+  if (!el || !station.coords || typeof L === 'undefined') return;
+  var map = L.map(mapId, {scrollWheelZoom:false, zoomControl:true, attributionControl:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+  L.control.attribution({prefix:false}).addTo(map);
+
+  var stIcon = L.divIcon({html:'<div class="map-pin-st">🚉</div>',className:'',iconSize:[24,24],iconAnchor:[12,12]});
+  L.marker(station.coords, {icon:stIcon}).addTo(map)
+    .bindPopup('<b>'+station.name+'</b><br><small>תחנת רכבת</small>');
+
+  var allPts = [station.coords];
+  var walkPts = [station.coords];
+
+  visAttrs.forEach(function(a){
+    var ac = a.coords || ATTR_COORDS[a.name];
+    if (!ac) return;
+    allPts.push(ac);
+    var howText = a.how || TRANSIT_HOW[a.name] || '';
+    var ico = a.transit
+      ? L.divIcon({html:'<div class="map-pin-at">🚌</div>',className:'',iconSize:[20,20],iconAnchor:[10,10]})
+      : L.divIcon({html:'<div class="map-pin-at">📍</div>',className:'',iconSize:[20,20],iconAnchor:[10,10]});
+    L.marker(ac,{icon:ico}).addTo(map)
+      .bindPopup('<b>'+a.name+'</b>'+(a.transit&&howText?'<br><small style="color:#1d4ed8;">🚌 '+howText+'</small>':'')+(a.price&&a.price!=='חינם'?'<br><small>'+a.price+'</small>':''));
+    if (!a.transit) walkPts.push(ac);
+  });
+
+  if (walkPts.length > 1)
+    L.polyline(walkPts,{color:'#e8b84b',weight:4,dashArray:'7,12',opacity:.85}).addTo(map);
+
+  if (allPts.length > 1)
+    map.fitBounds(L.latLngBounds(allPts),{padding:[30,30],maxZoom:16});
+  else
+    map.setView(station.coords, 15);
+
+  _mapInst[mapId] = map;
+}
 
 // ═══════════════════════ INIT ═══════════════════════
 buildTimeOptions();
