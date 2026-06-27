@@ -1319,6 +1319,7 @@ function buildScheduleHtml(s, startTime, state) {
 }
 
 var PLAN_STATIONS = [];
+var STATION_SCHED_DATA = {};
 
 function selectTrainOption(sid, arrStr, el) {
   // סמן כנבחרת
@@ -1329,6 +1330,16 @@ function selectTrainOption(sid, arrStr, el) {
   // עדכן שעת הגעה בכרטיס התחנה הנוכחית
   var arrEl = document.getElementById('arr-'+sid);
   if(arrEl) arrEl.textContent = 'הגעה ' + arrStr;
+
+  // בנה מחדש את לוח הזמנים לפי שעת הגעה חדשה
+  var sd = STATION_SCHED_DATA[sid];
+  if(sd) {
+    var parts2 = arrStr.split(':');
+    var newArrMins = parseInt(parts2[0])*60 + parseInt(parts2[1]);
+    var newSched = buildScheduleHtml(sd.s, newArrMins, sd.dayState);
+    var schedEl = document.getElementById('sched-'+sid);
+    if(schedEl) schedEl.innerHTML = newSched.html;
+  }
 
   // מצא תחנה הבאה
   var idx = PLAN_STATIONS.findIndex(function(x){ return x.sid===sid; });
@@ -1465,6 +1476,7 @@ async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containe
 
 function generateRoute() {
   PLAN_STATIONS = [];
+  STATION_SCHED_DATA = {};
   if(!selectedCity) return;
   var city=CITIES[selectedCity];
   var stids=Array.from(selectedStations).sort(function(a,b){return (STATIONS[a].arrOffset||0)-(STATIONS[b].arrOffset||0);});
@@ -1513,13 +1525,14 @@ function generateRoute() {
       startTime = Math.max(trainArrMins, prevStationEndTime + interMins);
     }
 
+    STATION_SCHED_DATA[sid] = {s: s, dayState: {hadCoffee: dayState.hadCoffee, hadLunch: dayState.hadLunch}};
     var schedResult = buildScheduleHtml(s, startTime, dayState);
     prevStationEndTime = schedResult.endTime;
     prevSid = sid;
     dayState = {hadCoffee: schedResult.hadCoffee, hadLunch: schedResult.hadLunch};
 
     var arrMins = startTime;
-    var walkRouteHtml = schedResult.html;
+    var walkRouteHtml = '<div id="sched-'+sid+'">'+schedResult.html+'</div>';
 
     var useTransitLocal = useLightRail || useBus;
     var visibleNearby = s.nearby.filter(function(n){ return !n.transit || useTransitLocal; });
