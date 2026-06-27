@@ -288,7 +288,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .tp-btn:disabled{background:#6b7280;cursor:default;}
 .tp-from{font-size:.68rem;color:#4b7c59;margin-bottom:6px;}
 .train-results{margin-top:9px;}
-.tr-option{background:#fff;border:1px solid #bbf7d0;border-radius:8px;padding:7px 10px;margin-bottom:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.tr-option{background:#fff;border:1.5px solid #bbf7d0;border-radius:8px;padding:8px 11px;margin-bottom:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;transition:background .15s,border-color .15s;}
+.tr-option:hover{background:#dcfce7;border-color:#4ade80;}
+.tr-option.selected{background:#bbf7d0;border-color:#15803d;border-width:2px;}
+.tr-option.selected::after{content:'✓ נבחרה';font-size:.65rem;font-weight:800;color:#15803d;margin-right:auto;}
 .tr-label{font-size:.7rem;font-weight:800;min-width:64px;color:#166534;}
 .tr-times{font-size:.78rem;color:#1a1a2e;}
 .tr-error{font-size:.75rem;color:#dc2626;padding:4px 0;}
@@ -1306,6 +1309,53 @@ function buildScheduleHtml(s, startTime, state) {
   return {html: html, endTime: t, hadCoffee: hadCoffee, hadLunch: hadLunch};
 }
 
+var PLAN_STATIONS = [];
+
+function selectTrainOption(sid, arrStr, el) {
+  // סמן כנבחרת
+  var panel = el.closest('.train-panel');
+  panel.querySelectorAll('.tr-option').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+
+  // מצא תחנה הבאה
+  var idx = PLAN_STATIONS.findIndex(function(x){ return x.sid===sid; });
+  if(idx < 0 || idx >= PLAN_STATIONS.length-1) return;
+  var cur = PLAN_STATIONS[idx];
+  var next = PLAN_STATIONS[idx+1];
+
+  // חשב שעת יציאה לתחנה הבאה: הגעה + זמן ביקור
+  var parts = arrStr.split(':');
+  var arrMins = parseInt(parts[0])*60 + parseInt(parts[1]);
+  var depMins = arrMins + Math.round(cur.visitTime * 0.85); // 85% מהזמן המוצע (אופטימי)
+  var dH = Math.floor(depMins/60)%24, dM = depMins%60;
+  var depStr = (dH<10?'0':'')+dH+':'+(dM<10?'0':'')+dM;
+
+  // פתח panel לתחנה הבאה ועדכן שעה ותאריך
+  var nextPanel = document.getElementById(next.tpId);
+  nextPanel.style.display = 'block';
+  document.getElementById(next.tiId).value = depStr;
+  var curDate = document.getElementById(cur.tdId).value;
+  document.getElementById(next.tdId).value = curDate;
+
+  // עדכן כפתור toggle של תחנה הבאה
+  var nextToggle = nextPanel.previousElementSibling && nextPanel.previousElementSibling.querySelector
+    ? null : null;
+  document.querySelectorAll('.train-toggle-btn').forEach(function(b){
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+next.sid+"'")){
+      b.classList.add('active');
+    }
+  });
+
+  // גלול לתחנה הבאה
+  setTimeout(function(){
+    nextPanel.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+
+  // הרץ חיפוש אוטומטי
+  var searchBtn = nextPanel.querySelector('.tp-btn');
+  loadTrainsManual(next.fromRailId, next.toRailId, next.tiId, next.tdId, next.tcId, searchBtn);
+}
+
 function toggleTrainPanel(sid, btn) {
   var panel = document.getElementById('tp-'+sid);
   var open = panel.style.display !== 'none';
@@ -1333,11 +1383,14 @@ async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containe
       el.innerHTML='<div class="tr-error">לא נמצאו רכבות מהשעה '+hour+' ואילך</div>';
     } else {
       var labels = ['🟢 אופציה א׳','🟡 אופציה ב׳','🔴 אופציה ג׳'];
+      var curSid = containerId.replace('tr-','');
       el.innerHTML = travels.slice(0,3).map(function(t,i){
         var dep=(t.departureTime||'').slice(11,16)||'--';
         var arr=(t.arrivalTime||'').slice(11,16)||'--';
-        return '<div class="tr-option"><div class="tr-label">'+labels[i]+'</div>'
-          +'<div class="tr-times">יציאה <b>'+dep+'</b> · הגעה <b>'+arr+'</b></div></div>';
+        return '<div class="tr-option" onclick="selectTrainOption(\''+curSid+'\',\''+arr+'\',this)">'
+          +'<div class="tr-label">'+labels[i]+'</div>'
+          +'<div class="tr-times">יציאה <b>'+dep+'</b> · הגעה <b>'+arr+'</b></div>'
+          +'</div>';
       }).join('');
     }
     btn.textContent='חפש'; btn.disabled=false;
@@ -1349,6 +1402,7 @@ async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containe
 }
 
 function generateRoute() {
+  PLAN_STATIONS = [];
   if(!selectedCity) return;
   var city=CITIES[selectedCity];
   var stids=Array.from(selectedStations).sort(function(a,b){return (STATIONS[a].arrOffset||0)-(STATIONS[b].arrOffset||0);});
@@ -1485,9 +1539,10 @@ function generateRoute() {
       var fromRailId = (idx===0) ? HOME_STATION_RAIL_ID : (STATION_RAIL_IDS[stids[idx-1]] || HOME_STATION_RAIL_ID);
       var fromName = (idx===0) ? 'יבנה מזרח' : STATIONS[stids[idx-1]].name;
       var suggestedHour = minsToStr(Math.max(0, arrMins - 30));
-      var tcId = 'tr-'+sid, tiId = 'ti-'+sid;
+      var tcId = 'tr-'+sid, tiId = 'ti-'+sid, tdId = 'td-'+sid;
+      PLAN_STATIONS.push({sid:sid, visitTime:s.visitTime, tiId:tiId, tdId:tdId, tcId:tcId,
+        tpId:'tp-'+sid, fromRailId:fromRailId, toRailId:toRailId});
       trainToggleBtn = '<button class="train-toggle-btn" onclick="toggleTrainPanel(\''+sid+'\',this)">🚂 זמנים</button>';
-      var tdId = 'td-'+sid;
       trainHtml = '<div class="train-panel" id="tp-'+sid+'" style="display:none;">'
         +'<div class="tp-from">מ: <b>'+fromName+'</b> → <b>'+s.name+'</b></div>'
         +'<div class="tp-label">בחרי תאריך ושעת יציאה לקבלת 3 אופציות:</div>'
