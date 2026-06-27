@@ -1326,6 +1326,10 @@ function selectTrainOption(sid, arrStr, el) {
   panel.querySelectorAll('.tr-option').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
 
+  // עדכן שעת הגעה בכרטיס התחנה הנוכחית
+  var arrEl = document.getElementById('arr-'+sid);
+  if(arrEl) arrEl.textContent = 'הגעה ' + arrStr;
+
   // מצא תחנה הבאה
   var idx = PLAN_STATIONS.findIndex(function(x){ return x.sid===sid; });
   if(idx < 0 || idx >= PLAN_STATIONS.length-1) return;
@@ -1644,7 +1648,7 @@ function generateRoute() {
             +'<div class="sta-title">'+s.name+'</div>'
             +trainToggleBtn
             +returnToggleBtn
-            +'<div class="sta-arr">הגעה ~'+minsToStr(arrMins)+'</div>'
+            +'<div class="sta-arr" id="arr-'+sid+'">הגעה ~'+minsToStr(arrMins)+'</div>'
           +'</div>'
           +'<div class="sta-badge">'+s.badge+' · זמן מומלץ: ~'+Math.floor(s.visitTime/60)+'ש\'</div>'
         +'</div>'
