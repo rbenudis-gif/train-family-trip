@@ -1327,9 +1327,10 @@ async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containe
     });
     var data = await res.json();
     var travels = (data&&data.result&&data.result.travels)||[];
+    travels = travels.filter(function(t){ return (t.departureTime||'').slice(11,16) >= hour; });
     var el = document.getElementById(containerId);
     if(!travels.length){
-      el.innerHTML='<div class="tr-error">לא נמצאו רכבות מהשעה הזו</div>';
+      el.innerHTML='<div class="tr-error">לא נמצאו רכבות מהשעה '+hour+' ואילך</div>';
     } else {
       var labels = ['🟢 אופציה א׳','🟡 אופציה ב׳','🔴 אופציה ג׳'];
       el.innerHTML = travels.slice(0,3).map(function(t,i){
