@@ -295,6 +295,15 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .tr-label{font-size:.7rem;font-weight:800;min-width:64px;color:#166534;}
 .tr-times{font-size:.78rem;color:#1a1a2e;}
 .tr-error{font-size:.75rem;color:#dc2626;padding:4px 0;}
+.return-toggle-btn{background:#1d4ed8;color:#fff;border:none;border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:800;cursor:pointer;flex-shrink:0;white-space:nowrap;}
+.return-toggle-btn.active{background:#1e40af;outline:2px solid #93c5fd;}
+.return-panel{background:#eff6ff;border-top:2px solid #93c5fd;padding:11px 13px;}
+.rp-from{font-size:.68rem;color:#1e40af;margin-bottom:6px;}
+.ret-option{background:#fff;border:1.5px solid #bfdbfe;border-radius:8px;padding:8px 11px;margin-bottom:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;transition:background .15s;}
+.ret-option:hover{background:#dbeafe;border-color:#60a5fa;}
+.ret-option.selected{background:#bfdbfe;border-color:#1d4ed8;border-width:2px;}
+.ret-option.selected::after{content:'✓ נבחרה';font-size:.65rem;font-weight:800;color:#1d4ed8;margin-right:auto;}
+.ret-label{font-size:.7rem;font-weight:800;min-width:64px;color:#1e40af;}
 
 .cost-result{background:linear-gradient(135deg,#1a1a2e,#0f1729);border-radius:14px;padding:14px;margin-top:10px;}
 .cr-title{font-size:.78rem;color:var(--gold);font-weight:700;letter-spacing:.8px;margin-bottom:9px;}
@@ -1363,6 +1372,55 @@ function toggleTrainPanel(sid, btn) {
   btn.classList.toggle('active', !open);
 }
 
+function toggleReturnPanel(sid, btn) {
+  var panel = document.getElementById('rp-'+sid);
+  var open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  btn.classList.toggle('active', !open);
+}
+
+async function loadTrainsReturn(fromId, timeInputId, dateInputId, containerId, btn) {
+  var hour = document.getElementById(timeInputId).value || '14:00';
+  var date = document.getElementById(dateInputId).value || new Date().toISOString().slice(0,10);
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    var res = await fetch(TRAINS_PROXY, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({methodName:'searchTrainLuzForDateTime',
+        fromStation:String(fromId), toStation:String(HOME_STATION_RAIL_ID),
+        date:date, hour:hour, systemType:'2',
+        scheduleType:'ByDeparture', languageId:'Hebrew'})
+    });
+    var data = await res.json();
+    var travels = (data&&data.result&&data.result.travels)||[];
+    travels = travels.filter(function(t){ return (t.departureTime||'').slice(11,16) >= hour; });
+    var el = document.getElementById(containerId);
+    if(!travels.length){
+      el.innerHTML='<div class="tr-error">לא נמצאו רכבות חזרה מהשעה '+hour+' ואילך</div>';
+    } else {
+      var labels = ['🟢 אופציה א׳','🟡 אופציה ב׳','🔴 אופציה ג׳'];
+      el.innerHTML = travels.slice(0,3).map(function(t,i){
+        var dep=(t.departureTime||'').slice(11,16)||'--';
+        var arr=(t.arrivalTime||'').slice(11,16)||'--';
+        return '<div class="ret-option" onclick="selectReturnOption(this)">'
+          +'<div class="ret-label">'+labels[i]+'</div>'
+          +'<div class="tr-times">יציאה <b>'+dep+'</b> · הגעה יבנה <b>'+arr+'</b></div>'
+          +'</div>';
+      }).join('');
+    }
+    btn.textContent='חפש'; btn.disabled=false;
+  } catch(e) {
+    var el2=document.getElementById(containerId);
+    if(el2) el2.innerHTML='<div class="tr-error">שגיאת חיבור — נסי שוב</div>';
+    btn.textContent='חפש'; btn.disabled=false;
+  }
+}
+
+function selectReturnOption(el) {
+  el.closest('.return-panel').querySelectorAll('.ret-option').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
 async function loadTrainsManual(fromId, toId, timeInputId, dateInputId, containerId, btn) {
   var hour = document.getElementById(timeInputId).value || '08:00';
   var date = document.getElementById(dateInputId).value || new Date().toISOString().slice(0,10);
@@ -1533,7 +1591,7 @@ function generateRoute() {
     }
     var busHtml=useBus&&s.bus?'<div class="bus-section"><div class="bus-head"><div class="bus-ico">🚌</div><div class="bus-title">קווי אוטובוס</div></div><div class="bus-tip">'+s.bus+'</div></div>':'';
 
-    var trainHtml = '', trainToggleBtn = '';
+    var trainHtml = '', trainToggleBtn = '', returnHtml = '', returnToggleBtn = '';
     var toRailId = STATION_RAIL_IDS[sid];
     if(toRailId) {
       var fromRailId = (idx===0) ? HOME_STATION_RAIL_ID : (STATION_RAIL_IDS[stids[idx-1]] || HOME_STATION_RAIL_ID);
@@ -1553,6 +1611,21 @@ function generateRoute() {
         +'</div>'
         +'<div class="train-results" id="'+tcId+'"></div>'
         +'</div>';
+
+      // Panel חזרה
+      var rriId = 'rri-'+sid, rrdId = 'rrd-'+sid, rrcId = 'rrc-'+sid;
+      var retSuggest = minsToStr(Math.min(1380, arrMins + s.visitTime));
+      returnToggleBtn = '<button class="return-toggle-btn" onclick="toggleReturnPanel(\''+sid+'\',this)">🏠 חזרה</button>';
+      returnHtml = '<div class="return-panel" id="rp-'+sid+'" style="display:none;">'
+        +'<div class="rp-from">חזרה מ: <b>'+s.name+'</b> → <b>יבנה מזרח</b></div>'
+        +'<div class="tp-label">בחרי תאריך ושעת יציאה לחזרה:</div>'
+        +'<div class="tp-row">'
+          +'<input type="date" id="'+rrdId+'" class="tp-time" style="width:135px;" value="'+new Date().toISOString().slice(0,10)+'">'
+          +'<input type="time" id="'+rriId+'" class="tp-time" value="'+retSuggest+'">'
+          +'<button class="tp-btn" onclick="loadTrainsReturn('+toRailId+',\''+rriId+'\',\''+rrdId+'\',\''+rrcId+'\',this)">חפש</button>'
+        +'</div>'
+        +'<div class="train-results" id="'+rrcId+'"></div>'
+        +'</div>';
     }
 
     // מפת Leaflet
@@ -1570,12 +1643,14 @@ function generateRoute() {
           +'<div class="sta-title-row">'
             +'<div class="sta-title">'+s.name+'</div>'
             +trainToggleBtn
+            +returnToggleBtn
             +'<div class="sta-arr">הגעה ~'+minsToStr(arrMins)+'</div>'
           +'</div>'
           +'<div class="sta-badge">'+s.badge+' · זמן מומלץ: ~'+Math.floor(s.visitTime/60)+'ש\'</div>'
         +'</div>'
       +'</div>'
       +trainHtml
+      +returnHtml
       +mapHtml
       +walkRouteHtml
       +'<div class="nearby-list">'+nearby+'</div>'
