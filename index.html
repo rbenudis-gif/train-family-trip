@@ -201,6 +201,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .ni-rating{font-size:.74rem;color:#f59e0b;font-weight:700;}
 .ni-map-btn{font-size:.72rem;background:var(--navy);color:#fff;border-radius:10px;padding:3px 9px;text-decoration:none;font-weight:700;}
 .ni-map-btn:hover{background:var(--gold);color:var(--navy);}
+.ni-url-btn{background:#0891b2!important;}
+.ni-url-btn:hover{background:#0e7490!important;color:#fff!important;}
 
 .walk-route{background:linear-gradient(135deg,#fffbf0,#fff8e7);border-top:2px solid var(--gold);padding:10px 13px 8px;}
 .wr-title{font-size:.72rem;font-weight:800;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
@@ -227,6 +229,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .rest-desc{font-size:.76rem;color:#374151;margin-top:3px;line-height:1.45;}
 .rest-map{font-size:.72rem;background:#16a34a;color:#fff;border-radius:10px;padding:3px 8px;text-decoration:none;font-weight:700;flex-shrink:0;}
 .rest-map:hover{background:#14532d;}
+.rest-url-btn{background:#0891b2!important;}
+.rest-url-btn:hover{background:#0e7490!important;}
+.sched-url-btn{background:#0891b2!important;}
+.sched-url-btn:hover{background:#0e7490!important;}
 
 .sched-section{background:#fafafa;border-top:2px solid var(--gold);padding:12px 13px 6px;}
 .sched-title{font-size:.88rem;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
@@ -577,7 +583,7 @@ const STATIONS = {
        subStops:[{name:'ס"מ 0 — ממול לרכבת'},{name:'כיכר הקיץ — 200 מ׳'},{name:'מגרש כדורעף ים'},{name:'בר ים ואזור מבוגרים'},{name:'קצה — מול קניון הים'}]},
       {name:'קניון הים', walk:'8 דק׳', price:'חינם', rating:'3.9',
        desc:'קניון עם כל הרשתות הגדולות ומזנון. טוב לנפוח מהחום.',
-       mapUrl:'https://maps.google.com/?q=קניון+הים+אשדוד',
+       url:'https://hayam.co.il', mapUrl:'https://maps.google.com/?q=קניון+הים+אשדוד',
        subStops:[{name:'כניסה מהטיילת'},{name:'קומת מזון — קרקע'},{name:'HOT CINEMA — קומה 2'},{name:'ספורט אקסטרים — קומה 3'}]},
     ],
     restaurants:[
@@ -608,11 +614,11 @@ const STATIONS = {
     nearby:[
       {name:'מגדלי עזריאלי', walk:'2 דק׳', price:'חינם / ₪25 תצפית', rating:'4.5',
        desc:'שלושה מגדלים אייקוניים. קניון בתחתית + תצפית מקומה 49 — נוף עוצר נשימה.',
-       mapUrl:'https://maps.google.com/?q=מגדלי+עזריאלי+תל+אביב',
+       url:'https://www.azrielicenter.co.il', mapUrl:'https://maps.google.com/?q=מגדלי+עזריאלי+תל+אביב',
        subStops:[{name:'כניסה לקניון — קומת כניסה'},{name:'סיבוב הקניון המעגלי — הקניון הייחודי'},{name:'מגדל עגול — מעלית לתצפית קומה 49 (₪25)'},{name:'רחבת עזריאלי בחוץ — צילומים ואווירה'}]},
       {name:'שרונה מרקט', walk:'12 דק׳', price:'חינם', rating:'4.6',
        desc:'שוק גורמה ברובע לשעבר של טמפלרים גרמנים. בתים היסטוריים, מסעדות שף, בוטיקים ועיצוב. אחד היפים בת"א.',
-       mapUrl:'https://maps.google.com/?q=שרונה+מרקט+תל+אביב',
+       url:'https://www.sarona.co.il', mapUrl:'https://maps.google.com/?q=שרונה+מרקט+תל+אביב',
        subStops:[{name:'כניסה מרחוב הגנה — בתים גרמניים מ-1871'},{name:'שרונה מרקט — אולם שוק גורמה'},{name:'שדרת הגינות — ישיבה בצל'},{name:'מגדלי הברזל — ספסלים ותצפית'},{name:'חנויות הבוטיק והגלריות'}]},
     ],
     restaurants:[
@@ -645,7 +651,7 @@ const STATIONS = {
        subStops:[{name:'שדרות רוטשילד — כניסה ראשית'},{name:'בית הכנסת הישן 1922'},{name:'חנויות עיצוב וקרמיקה מקומית'},{name:'קפה ינונה — ארוחת בוקר מיוחדת'},{name:'גינת הפסלים בכיכר המרכזית'}]},
       {name:'יקב זיכרון יעקב', walk:'אוטובוס 921 — 10 דק׳', transit:true, price:'₪30–50', rating:'4.6',
        desc:'יקב קרמי — אחד מהגדולים בישראל. סיורים עם טעימות + גינה עם נוף לכרמל.',
-       mapUrl:'https://maps.google.com/?q=יקב+זיכרון+יעקב',
+       url:'https://www.carmelwines.co.il', mapUrl:'https://maps.google.com/?q=יקב+זיכרון+יעקב',
        subStops:[{name:'כניסה ראשית — שער עץ היסטורי'},{name:'גינת היקב — תצפית לים ולכרמל'},{name:'מוזיאון יין ורמי — כניסה'},{name:'אולם טעימות — 4 סוגי יין'},{name:'חנות מותג — מחירי מפעל'}]},
     ],
     restaurants:[
@@ -666,7 +672,7 @@ const STATIONS = {
        subStops:[{name:'כניסה ממול לתחנה'},{name:'מתקני כושר ים בחינם'},{name:'מגרש כדורגל ים'},{name:'מדשאות לפיקניק'},{name:'נוף לקו החוף הצפוני'}]},
       {name:'רכבל כרמל אייר', walk:'קו 45 — 15 דק׳ + 5 דק׳', transit:true, price:'₪20–25 הלוך-חזור', rating:'4.6',
        desc:'רכבל ייחודי בישראל — 4.5 ק"מ בקפסולות זכוכית. נוף מהמם על מפרץ חיפה. פועל ~10:00–18:00.',
-       mapUrl:'https://maps.google.com/?q=כרמל+אייר+חיפה',
+       url:'https://www.goldenridge.co.il', mapUrl:'https://maps.google.com/?q=כרמל+אייר+חיפה',
        subStops:[{name:'תחנת בת גלים — כניסה וכרטיסים'},{name:'עלייה ראשונה — נוף הנמל'},{name:'תחנת ספינקס — 2 ק"מ'},{name:'תחנת סטלה מאריס — פסגה'},{name:'מנזר הכרמל — 2 דק׳ הליכה'}]},
     ],
     restaurants:[
@@ -687,15 +693,15 @@ const STATIONS = {
        subStops:[{name:'שדרות בן גוריון 1 — כניסה'},{name:'בית קפה גרמני — מס׳ 25'},{name:'כנסייה גרמנית — מס׳ 45'},{name:'בתים היסטוריים מ-1868'},{name:'קצה השדרה — מבט לגני הבהאי'}]},
       {name:'גני הבהאי', walk:'12 דק׳', price:'חינם — הזמינו סיור מראש', rating:'4.8',
        desc:'אתר UNESCO מרהיב. גנים מדורגים על המדרון עם נוף פנורמי למפרץ חיפה. סיורים חינמיים.',
-       mapUrl:'https://maps.google.com/?q=גני+הבהאי+חיפה',
+       url:'https://www.ganbahai.org.il', mapUrl:'https://maps.google.com/?q=גני+הבהאי+חיפה',
        subStops:[{name:'כניסה — שדרות יפה נוף (הזמינו מראש!)'},{name:'מדרגות הגנים המדורגים'},{name:'ה-Shrine of the Báb — מרכז הגנים'},{name:'תצפית מרכזית — נוף למפרץ'},{name:'גן העליון — כניסה נוספת'}]},
       {name:'כרמלית חיפה', walk:'13 דק׳', transit:true, price:'₪8', rating:'4.4',
        desc:'הרכבת התת-קרקעית היחידה בישראל! 6 תחנות מהעיר התחתית לראש הכרמל. חוויה ייחודית.',
-       mapUrl:'https://maps.google.com/?q=כרמלית+חיפה',
+       url:'https://www.carmelit.com', mapUrl:'https://maps.google.com/?q=כרמלית+חיפה',
        subStops:[{name:'תחנה תחתית — מרכז העיר'},{name:'תחנת מסדה'},{name:'תחנת הנביאים'},{name:'תחנת גולומב'},{name:'תחנת ראש הכרמל — תצפית'}]},
       {name:'מדעטק — מוזיאון המדע', walk:'19 דק׳ / קו 37', transit:true, price:'₪49 מבוגר / ₪39 ילד', rating:'4.6',
        desc:'מוזיאון המדע הגדול בצפון. ניסויים אינטראקטיביים, כיפת כוכבים ומשחקי מדע לכל הגילאים.',
-       mapUrl:'https://maps.google.com/?q=מדעטק+חיפה',
+       url:'https://madatech.org.il', mapUrl:'https://maps.google.com/?q=מדעטק+חיפה',
        subStops:[{name:'כניסה ראשית — כיכר המדע'},{name:'אולם ניסויים — קומה 1'},{name:'כיפת הכוכבים — פלנטריום'},{name:'אולם הרובוטיקה'},{name:'חנות המדע לילדים'}]},
     ],
     restaurants:[
@@ -709,11 +715,11 @@ const STATIONS = {
     nearby:[
       {name:'רכבלית חיפה', walk:'5 דק׳', price:'₪15–20 הלוך-חזור', rating:'4.5',
        desc:'רכבלית 4.5 ק"מ בקפסולות זכוכית. נוף מהמם לעמק זבולון, המפרץ והגליל.',
-       mapUrl:'https://maps.google.com/?q=רכבלית+חיפה',
+       url:'https://www.goldenridge.co.il', mapUrl:'https://maps.google.com/?q=רכבלית+חיפה',
        subStops:[{name:'תחנת המפרץ — כניסה וכרטיסים'},{name:'עלייה ראשונה — נוף הנמל התעשייתי'},{name:'גבעה ראשונה — נוף הים'},{name:'גבעה שנייה — נוף הגליל'},{name:'תחנת האוניברסיטה — קצה הקו'}]},
       {name:'אוניברסיטת חיפה — תצפית', walk:'קצה הרכבלית', price:'חינם', rating:'4.6',
        desc:'מגדל אשת ספנות — נוף 360° על כל הצפון. בימים בהירים רואים עד לבנון!',
-       mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה',
+       url:'https://www.haifa.ac.il', mapUrl:'https://maps.google.com/?q=אוניברסיטת+חיפה',
        subStops:[{name:'שער הכניסה לקמפוס'},{name:'ספריה מרכזית — קומת כניסה'},{name:'מגדל אשת ספנות — מעלית לקומה 30'},{name:'תצפית 360° — מרשים מאוד!'},{name:'קנטינה — קפה ואוכל זול'}]},
     ],
     restaurants:[
@@ -726,7 +732,7 @@ const STATIONS = {
     nearby:[
       {name:'שוק מחנה יהודה', walk:'2 תחנות רכבת קלה / 16 דק׳ הליכה', transit:true, price:'חינם', rating:'4.7',
        desc:'השוק הכי חי בישראל. 250+ דוכנים. חגי, מומיק ובוריקס — ביום בשבילכם!',
-       mapUrl:'https://maps.google.com/?q=שוק+מחנה+יהודה+ירושלים',
+       url:'https://machne.co.il', mapUrl:'https://maps.google.com/?q=שוק+מחנה+יהודה+ירושלים',
        subStops:[{name:'כניסה מרחוב יפו — ראשית'},{name:'שאוורמה חגי — חובה ראשון!'},{name:'שורת הפירות הצבעונית'},{name:'מומיק — בורקס ביצה חם'},{name:'אזור התבלינים — ריחות מהמם'},{name:'אדוארדו — שפריצר בר'},{name:'בוריקס קסטנדה — מתוקים'},{name:'כניסה שנייה — רחוב אגריפס'}]},
       {name:'רחוב יפו + בן יהודה', walk:'2 תחנות רכבת קלה / 16 דק׳ הליכה', transit:true, price:'חינם', rating:'4.4',
        desc:'הרחוב הראשי של ירושלים החדשה. קניות, קפה ומוזיקאים ברחוב בן יהודה.',
@@ -734,7 +740,7 @@ const STATIONS = {
        subStops:[{name:'כיכר ספרא — נקודת הכניסה'},{name:'רחוב בן יהודה — שוק אמנויות'},{name:'גלידריית צ׳רצ׳יל — חובה!'},{name:'כיכר צה"ל — פסלים'},{name:'כלבו המרכזי — ציד מציאות'}]},
       {name:'מוזיאון המדע (Bloomfield)', walk:'אוטובוס 5 דק׳ + 10 דק׳', transit:true, price:'₪55', rating:'4.5',
        desc:'מוזיאון מדע אינטראקטיבי — ניסויים, לייזר וכיפת מניפולציות. מומלץ להזמין מראש.',
-       mapUrl:'https://maps.google.com/?q=מוזיאון+המדע+ירושלים',
+       url:'https://www.mada.org.il', mapUrl:'https://maps.google.com/?q=מוזיאון+המדע+ירושלים',
        subStops:[{name:'כניסה ראשית — הזמינו כרטיסים!'},{name:'פביליון הלייזר'},{name:'אולם ניסויים — 45 דק׳'},{name:'כיפת הפלנטריום'},{name:'חנות המדע לילדים'}]},
       {name:'עיר עתיקה', walk:'רכבת קלה 3 תחנות / אוטובוס 74', transit:true, price:'חינם', rating:'4.8',
        desc:'חומות, כנסיות, מסגדים ושוק ערבי. לא לפספס בשום מצב.',
@@ -752,7 +758,7 @@ const STATIONS = {
     nearby:[
       {name:'מנהרות הצלבנים', walk:'5 דק׳ אוטובוס + 5 דק׳', transit:true, price:'₪55', rating:'4.8',
        desc:'מנהרות מהמאה ה-12. ממוזג, פסיפסים ואורות מרשימים. ~90 דקות. חובה!',
-       mapUrl:'https://maps.google.com/?q=מנהרות+הצלבנים+עכו',
+       url:'https://www.akko.org.il', mapUrl:'https://maps.google.com/?q=מנהרות+הצלבנים+עכו',
        subStops:[{name:'כניסה — כיכר אל-ג׳זאר'},{name:'פרוזדור הכניסה — מרשים!'},{name:'אולם האבירים הגדול'},{name:'מנהרת הבריחה — 350 מ׳'},{name:'מגדל הנמל — תצפית'},{name:'יציאה — לכיוון הנמל'}]},
       {name:'שוק עכו העתיק', walk:'5 דק׳ אוטובוס + 5 דק׳', transit:true, price:'חינם', rating:'4.5',
        desc:'בזאר ערבי צבעוני בין חומות עתיקות. תבלינים, תכשיטים ובגדים רקומים.',
@@ -1162,7 +1168,7 @@ function buildScheduleHtml(s, startTime, state) {
     opts = opts||{};
     items.push({type:type, time:t, label:label, duration:duration,
       detail:opts.detail||'', walk:opts.walk||'', price:opts.price||'',
-      rating:opts.rating||'', mapUrl:opts.mapUrl||'', subStops:opts.subStops||[],
+      rating:opts.rating||'', mapUrl:opts.mapUrl||'', url:opts.url||'', subStops:opts.subStops||[],
       isTransit:!!opts.isTransit, transitHow:opts.transitHow||''});
     t += duration;
   }
@@ -1212,7 +1218,8 @@ function buildScheduleHtml(s, startTime, state) {
       price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl,
       subStops: attr.subStops||[],
       isTransit: !!attr.transit,
-      transitHow: TRANSIT_HOW[attr.name]||''
+      transitHow: TRANSIT_HOW[attr.name]||'',
+      url: attr.url||''
     });
   });
 
@@ -1263,6 +1270,7 @@ function buildScheduleHtml(s, startTime, state) {
     if(item.price) html+='<span class="sched-price">'+item.price+'</span>';
     if(item.rating) html+='<span class="sched-rating">⭐ '+item.rating+'</span>';
     if(item.mapUrl) html+='<a class="sched-map" href="'+item.mapUrl+'" target="_blank">📍 מפה</a>';
+    if(item.url) html+='<a class="sched-map sched-url-btn" href="'+item.url+'" target="_blank">🌐 אתר</a>';
     html+='</div></div></div>';
   });
   html+='</div>';
@@ -1333,6 +1341,7 @@ function generateRoute() {
     var nearby=visibleNearby.map(function(n){
       var stars=n.rating?'⭐ '+n.rating:'';
       var mapBtn=n.mapUrl?'<a class="ni-map-btn" href="'+n.mapUrl+'" target="_blank">📍 מפה</a>':'';
+      var urlBtn=n.url?'<a class="ni-map-btn ni-url-btn" href="'+n.url+'" target="_blank">🌐 אתר</a>':'';
       var howText = n.how || TRANSIT_HOW[n.name] || '';
       var transitTag = n.transit ? '<span class="ni-transit">🚌 תחבורה ציבורית</span>' : '';
       var howHtml = (n.transit && howText) ? '<div class="transit-how">🚌 <b>איך מגיעים:</b> '+howText+'</div>' : '';
@@ -1346,6 +1355,7 @@ function generateRoute() {
             +'<span class="ni-price">'+n.price+'</span>'
             +(stars?'<span class="ni-rating">'+stars+'</span>':'')
             +mapBtn
+            +urlBtn
           +'</div>'
         +'</div></div>';
     }).join('');
@@ -1365,6 +1375,7 @@ function generateRoute() {
       var restItems=s.restaurants.map(function(r){
         var rStars=r.rating?'⭐ '+r.rating:'';
         var rMap=r.mapUrl?'<a class="rest-map" href="'+r.mapUrl+'" target="_blank">📍 מפה</a>':'';
+        var rUrl=r.url?'<a class="rest-map rest-url-btn" href="'+r.url+'" target="_blank">🌐 אתר</a>':'';
         return '<div class="rest-item">'
           +'<div class="rest-walk">'+r.walk+'</div>'
           +'<div class="rest-body">'
@@ -1373,6 +1384,7 @@ function generateRoute() {
               +(rStars?'<span class="rest-rating">'+rStars+'</span>':'')
               +'<span class="rest-price">'+r.price+'</span>'
               +rMap
+              +rUrl
             +'</div>'
             +'<div class="rest-desc">'+r.desc+'</div>'
           +'</div></div>';
