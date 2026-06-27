@@ -244,6 +244,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .sched-rating{font-size:.72rem;color:#f59e0b;font-weight:700;}
 .sched-map{font-size:.7rem;background:var(--navy);color:#fff;border-radius:10px;padding:3px 8px;text-decoration:none;font-weight:700;}
 .sched-map:hover{background:var(--gold);color:var(--navy);}
+.sched-transit-badge{display:inline-block;background:#ede9fe;color:#6d28d9;font-size:.68rem;font-weight:800;border-radius:5px;padding:2px 8px;margin:3px 0 2px;border:1px solid #c4b5fd;}
+.sched-transit-how{background:#f5f3ff;border-right:3px solid #7c3aed;border-radius:0 6px 6px 0;padding:4px 9px;margin:4px 0 2px;font-size:.72rem;color:#5b21b6;line-height:1.5;}
 
 .lr-section{background:#f5f3ff;border-top:1px solid #ddd6fe;padding:10px 13px;}
 .lr-head{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
@@ -1160,7 +1162,8 @@ function buildScheduleHtml(s, startTime, state) {
     opts = opts||{};
     items.push({type:type, time:t, label:label, duration:duration,
       detail:opts.detail||'', walk:opts.walk||'', price:opts.price||'',
-      rating:opts.rating||'', mapUrl:opts.mapUrl||'', subStops:opts.subStops||[]});
+      rating:opts.rating||'', mapUrl:opts.mapUrl||'', subStops:opts.subStops||[],
+      isTransit:!!opts.isTransit, transitHow:opts.transitHow||''});
     t += duration;
   }
 
@@ -1207,7 +1210,9 @@ function buildScheduleHtml(s, startTime, state) {
       detail: shortDesc,
       walk: i===0 ? attr.walk : '~8 דק׳ מהקודם',
       price:attr.price, rating:attr.rating, mapUrl:attr.mapUrl,
-      subStops: attr.subStops||[]
+      subStops: attr.subStops||[],
+      isTransit: !!attr.transit,
+      transitHow: TRANSIT_HOW[attr.name]||''
     });
   });
 
@@ -1224,17 +1229,19 @@ function buildScheduleHtml(s, startTime, state) {
   add('return', 'חזרה לתחנה 🚉', 0);
 
   var conf = {
-    arrive:    {dot:'🚉', color:'var(--navy)', bg:'#e8eaf6'},
-    coffee:    {dot:'☕', color:'#92400e',     bg:'#fffbeb'},
-    attraction:{dot:'📍', color:'#1d4ed8',    bg:'#eff6ff'},
-    lunch:     {dot:'🍽️', color:'#166534',    bg:'#f0fdf4'},
-    return:    {dot:'🏁', color:'var(--navy)', bg:'#e8eaf6'},
+    arrive:            {dot:'🚉', color:'var(--navy)', bg:'#e8eaf6'},
+    coffee:            {dot:'☕', color:'#92400e',     bg:'#fffbeb'},
+    attraction:        {dot:'📍', color:'#1d4ed8',    bg:'#eff6ff'},
+    'transit-attr':    {dot:'🚌', color:'#7c3aed',    bg:'#f5f3ff'},
+    lunch:             {dot:'🍽️', color:'#166534',    bg:'#f0fdf4'},
+    return:            {dot:'🏁', color:'var(--navy)', bg:'#e8eaf6'},
   };
 
   var stationNum = s.name;
   var html='<div class="sched-section"><div class="sched-title">🗓️ לוח זמנים — '+stationNum+'</div>';
   items.forEach(function(item, i) {
-    var c = conf[item.type]||conf.attraction;
+    var effectiveType = (item.type==='attraction' && item.isTransit) ? 'transit-attr' : item.type;
+    var c = conf[effectiveType]||conf.attraction;
     var timeStr = minsToStr(item.time);
     var endStr  = item.duration > 0 ? ' – '+minsToStr(item.time+item.duration) : '';
     html += '<div class="sched-item" style="--sched-color:'+c.color+';--sched-bg:'+c.bg+';">';
@@ -1242,7 +1249,9 @@ function buildScheduleHtml(s, startTime, state) {
     html += '<div class="sched-line"><div class="sched-dot">'+c.dot+'</div>'+(i<items.length-1?'<div class="sched-vline"></div>':'')+'</div>';
     html += '<div class="sched-body">';
     html += '<div class="sched-label">'+item.label+'</div>';
-    if(item.walk) html+='<div class="sched-walk">🚶 '+item.walk+'</div>';
+    if(item.isTransit) html+='<div class="sched-transit-badge">🚌 מצריך תחבורה ציבורית</div>';
+    if(item.walk) html+='<div class="sched-walk">'+(item.isTransit?'🚌':'🚶')+' '+item.walk+'</div>';
+    if(item.transitHow) html+='<div class="sched-transit-how">'+item.transitHow+'</div>';
     if(item.detail) html+='<div class="sched-detail">'+item.detail+'</div>';
     if(item.subStops&&item.subStops.length){
       html+='<details class="sub-det"><summary class="sub-sum">🗺️ '+item.subStops.length+' עצירות במסלול</summary>'
