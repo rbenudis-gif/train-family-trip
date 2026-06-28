@@ -1320,14 +1320,14 @@ function buildScheduleHtml(s, startTime, state) {
         ? 'https://www.google.com/maps/dir/'+routePts.join('/')
         : (item.mapUrl || '');
       var routeBtn = routeUrl
-        ? ' <a href="'+routeUrl+'" target="_blank" style="font-size:.6rem;background:#15803d;color:#fff;border-radius:5px;padding:2px 7px;text-decoration:none;white-space:nowrap;margin-right:5px;">🗺️ '+(routePts.length>1?'כל המסלול':'מפה')+'</a>'
+        ? '<a href="'+routeUrl+'" target="_blank" style="display:inline-block;font-size:.6rem;background:#15803d;color:#fff;border-radius:5px;padding:2px 8px;text-decoration:none;white-space:nowrap;margin-top:4px;">🗺️ '+(routePts.length>1?'כל המסלול':'מפה לאזור')+'</a>'
         : '';
-      html+='<details class="sub-det"><summary class="sub-sum">📍 '+item.subStops.length+' עצירות במסלול'+routeBtn+'</summary>'
+      html+='<details class="sub-det"><summary class="sub-sum">📍 '+item.subStops.length+' עצירות במסלול</summary>'
         +'<div class="sub-stops">'+item.subStops.map(function(ss,si){
           var ssMap = ss.mapUrl || (ss.coords ? 'https://maps.google.com/?q='+ss.coords[0]+','+ss.coords[1] : '');
           var ssMapBtn = ssMap ? '<a href="'+ssMap+'" target="_blank" style="font-size:.6rem;background:#1a1a2e;color:#e8b84b;border-radius:5px;padding:1px 6px;text-decoration:none;white-space:nowrap;flex-shrink:0;">📍</a>' : '';
           return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name" style="flex:1;">'+(si+1)+'. '+ss.name+'</div>'+ssMapBtn+'</div>';
-        }).join('')+'</div></details>';
+        }).join('')+'</div></details>'+(routeBtn?'<div style="margin-top:2px;">'+routeBtn+'</div>':'');
     }
     html+='<div class="sched-meta">';
     if(item.price) html+='<span class="sched-price">'+item.price+'</span>';
