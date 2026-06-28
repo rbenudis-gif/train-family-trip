@@ -1315,10 +1315,14 @@ function buildScheduleHtml(s, startTime, state) {
     if(item.transitHow) html+='<div class="sched-transit-how">'+item.transitHow+'</div>';
     if(item.detail) html+='<div class="sched-detail">'+item.detail+'</div>';
     if(item.subStops&&item.subStops.length){
-      html+='<details class="sub-det"><summary class="sub-sum">🗺️ '+item.subStops.length+' עצירות במסלול</summary>'
+      var routePts = item.subStops.filter(function(ss){ return ss.coords; }).map(function(ss){ return ss.coords[0]+','+ss.coords[1]; });
+      var routeBtn = routePts.length > 1
+        ? ' <a href="https://www.google.com/maps/dir/'+routePts.join('/')+'" target="_blank" style="font-size:.6rem;background:#15803d;color:#fff;border-radius:5px;padding:2px 7px;text-decoration:none;white-space:nowrap;margin-right:5px;">🗺️ כל המסלול</a>'
+        : '';
+      html+='<details class="sub-det"><summary class="sub-sum">📍 '+item.subStops.length+' עצירות במסלול'+routeBtn+'</summary>'
         +'<div class="sub-stops">'+item.subStops.map(function(ss,si){
           var ssMap = ss.mapUrl || (ss.coords ? 'https://maps.google.com/?q='+ss.coords[0]+','+ss.coords[1] : '');
-          var ssMapBtn = ssMap ? '<a href="'+ssMap+'" target="_blank" style="font-size:.6rem;background:#1a1a2e;color:#e8b84b;border-radius:5px;padding:1px 6px;text-decoration:none;white-space:nowrap;flex-shrink:0;">📍 מפה</a>' : '';
+          var ssMapBtn = ssMap ? '<a href="'+ssMap+'" target="_blank" style="font-size:.6rem;background:#1a1a2e;color:#e8b84b;border-radius:5px;padding:1px 6px;text-decoration:none;white-space:nowrap;flex-shrink:0;">📍</a>' : '';
           return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name" style="flex:1;">'+(si+1)+'. '+ss.name+'</div>'+ssMapBtn+'</div>';
         }).join('')+'</div></details>';
     }
