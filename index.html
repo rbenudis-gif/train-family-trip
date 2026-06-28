@@ -193,7 +193,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .sub-sum::-webkit-details-marker{display:none;}
 .sub-det[open] .sub-sum{background:#e8edff;}
 .sub-stops{margin-top:5px;padding-right:8px;border-right:2px dashed var(--gold);}
-.sub-stop{display:flex;gap:5px;align-items:flex-start;padding:2px 0;}
+.sub-stop{display:flex;gap:5px;align-items:center;padding:3px 0;}
 .sub-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
 .sub-name{font-size:.66rem;font-weight:700;color:var(--navy);}
 .ni-price{font-size:.76rem;color:var(--green);font-weight:700;margin-top:2px;}
@@ -1317,7 +1317,9 @@ function buildScheduleHtml(s, startTime, state) {
     if(item.subStops&&item.subStops.length){
       html+='<details class="sub-det"><summary class="sub-sum">🗺️ '+item.subStops.length+' עצירות במסלול</summary>'
         +'<div class="sub-stops">'+item.subStops.map(function(ss,si){
-          return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name">'+(si+1)+'. '+ss.name+'</div></div>';
+          var ssMap = ss.mapUrl || (ss.coords ? 'https://maps.google.com/?q='+ss.coords[0]+','+ss.coords[1] : '');
+          var ssMapBtn = ssMap ? '<a href="'+ssMap+'" target="_blank" style="font-size:.6rem;background:#1a1a2e;color:#e8b84b;border-radius:5px;padding:1px 6px;text-decoration:none;white-space:nowrap;flex-shrink:0;">📍 מפה</a>' : '';
+          return '<div class="sub-stop"><div class="sub-dot"></div><div class="sub-name" style="flex:1;">'+(si+1)+'. '+ss.name+'</div>'+ssMapBtn+'</div>';
         }).join('')+'</div></details>';
     }
     html+='<div class="sched-meta">';
