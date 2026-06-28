@@ -1158,9 +1158,7 @@ function owByCategory(cat, adultOW) {
   return adultOW;
 }
 function dpByCategory(cat, dayPassA) {
-  if (cat==='child') return dayPassA * 0.5;
-  if (cat==='young') return dayPassA * 0.67;
-  return dayPassA;
+  return dayPassA; // חופשי יומי — מחיר מלא לכולם (הנחות רק בכרטיס בודד ובחופשי חודשי)
 }
 
 function calcTripCost(cityKey, type) {
