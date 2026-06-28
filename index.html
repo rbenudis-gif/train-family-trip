@@ -1316,8 +1316,11 @@ function buildScheduleHtml(s, startTime, state) {
     if(item.detail) html+='<div class="sched-detail">'+item.detail+'</div>';
     if(item.subStops&&item.subStops.length){
       var routePts = item.subStops.filter(function(ss){ return ss.coords; }).map(function(ss){ return ss.coords[0]+','+ss.coords[1]; });
-      var routeBtn = routePts.length > 1
-        ? ' <a href="https://www.google.com/maps/dir/'+routePts.join('/')+'" target="_blank" style="font-size:.6rem;background:#15803d;color:#fff;border-radius:5px;padding:2px 7px;text-decoration:none;white-space:nowrap;margin-right:5px;">🗺️ כל המסלול</a>'
+      var routeUrl = routePts.length > 1
+        ? 'https://www.google.com/maps/dir/'+routePts.join('/')
+        : (item.mapUrl || '');
+      var routeBtn = routeUrl
+        ? ' <a href="'+routeUrl+'" target="_blank" style="font-size:.6rem;background:#15803d;color:#fff;border-radius:5px;padding:2px 7px;text-decoration:none;white-space:nowrap;margin-right:5px;">🗺️ '+(routePts.length>1?'כל המסלול':'מפה')+'</a>'
         : '';
       html+='<details class="sub-det"><summary class="sub-sum">📍 '+item.subStops.length+' עצירות במסלול'+routeBtn+'</summary>'
         +'<div class="sub-stops">'+item.subStops.map(function(ss,si){
