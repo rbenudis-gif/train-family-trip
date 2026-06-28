@@ -562,6 +562,7 @@ const ATTR_COORDS = {
   'טיילת בת גלים':         [32.8262,34.9718],
   'רכבל כרמל אייר':        [32.8284,34.9749],
   'ואדי ניסנאס':            [32.8165,34.9961],
+  'ביית ג׳ן':               [32.8131,34.9920],
   'מושבה גרמנית':          [32.8214,34.9913],
   'גני הבהאי':             [32.8114,34.9853],
   'כרמלית חיפה':           [32.8128,34.9952],
@@ -710,9 +711,21 @@ const STATIONS = {
   hf_shamona:{name:'חיפה מרכז השמונה',badge:'ואדי ניסנאס + מושבה גרמנית',optional:false,arrOffset:95,visitTime:120,coords:[32.8170,34.9987],
     nearby:[
       {name:'ואדי ניסנאס', walk:'4 דק׳', price:'חינם', rating:'4.6',
-       desc:'שכונה ערבית-נוצרית קסומה. פסלים בכל פינה, קנאפה אמיתית וגלריות אמנות.',
+       url:'https://www.hey-fa-it.com/2023/05/מדריך-ואדי-ניסנאס.html',
        mapUrl:'https://maps.google.com/?q=ואדי+ניסנאס+חיפה',
-       subStops:[{name:'כניסה מרחוב שמריהו לוין'},{name:'קנאפה אכבר — ₪15-20 (חם מהתנור!)'},{name:'כיכר הפסלים — תצלומים'},{name:'גלריית אל-מידאן — אמנות ערבית'},{name:'פלאפל ומסעדות ערביות'},{name:'חנויות תבלינים ובשמים'},{name:'מסגד ואדי — קצה הרחוב'}]},
+       desc:'שכונה ערבית-נוצרית קסומה מלאת ריחות, צבעים וחיים. שוק אותנטי, ציורי קיר, קרמיקה ארמנית, קפה ערבי ופלאפל אגדי. מומלץ ביום חול (א׳–ו׳).',
+       subStops:[
+         {num:1, name:'כיכר אמיל חביבי — כניסה לשוק', desc:'כיכר המרכז, נקודת פתיחה לסיור', coords:[32.8165,34.9961]},
+         {num:2, name:'אום סבלי — מאפייה (ואדי 40)', desc:'פיתות טריות וקנאפה חמה מהתנור — חובה!', coords:[32.8173,35.0004]},
+         {num:3, name:'ערביקה קפה (ואדי 44)', desc:'שלוש דורות קלייה — קפה ערבי מיוחד', coords:[32.8175,35.0007]},
+         {num:4, name:'חומוס אל-שאם (ואדי 21)', desc:'המנה המיוחדת ביותר בארץ — מתכון בן 200 שנה', coords:[32.8170,34.9991]},
+         {num:5, name:'פלאפל ג׳ורג׳ (יוחנן הקדוש 26)', desc:'תחרות הפלאפל האגדית — אחד מ-3 הטובים בואדי', coords:[32.8167,34.9983]},
+         {num:6, name:'נדימה (יוחנן הקדוש 36)', desc:'סלט חצילים ומאכלי בשר-אורז ביתיים', coords:[32.8163,34.9978]},
+         {num:7, name:'ציורי קיר ופסלי רחוב', desc:'פסלים בכל פינה, ציורי קיר צבעוניים לאורך כל הרחוב', coords:[32.8158,34.9975]},
+         {num:8, name:'רנה — קרמיקה ארמנית (ח׳ורי 34)', desc:'קרמיקה ארמנית עבודת יד — מתנות מושלמות', coords:[32.8161,34.9998]},
+         {num:9, name:'זיאד — חנות תבלינים', desc:'זעתר, סומאק, זיתים ותבלינים מזרחיים', coords:[32.8164,34.9994]},
+         {num:10, name:'ביית ג׳ן — מרכז יהודי-ערבי (שד׳ ציונות 33)', desc:'מרכז תרבות, תערוכות ופעילויות', coords:[32.8131,34.9920]},
+       ]},
       {name:'מושבה גרמנית', walk:'12 דק׳', price:'חינם', rating:'4.5',
        desc:'שכונה של תמפלרים גרמנים מ-1868. שדרות בן גוריון עם בתים היסטוריים מרשימים ובתי קפה.',
        mapUrl:'https://maps.google.com/?q=מושבה+גרמנית+חיפה',
@@ -1818,6 +1831,15 @@ function initStationMap(mapId, station, visAttrs) {
     L.marker(ac,{icon:ico}).addTo(map)
       .bindPopup('<b>'+a.name+'</b>'+(a.transit&&howText?'<br><small style="color:#1d4ed8;">🚌 '+howText+'</small>':'')+(a.price&&a.price!=='חינם'?'<br><small>'+a.price+'</small>':''));
     if (!a.transit) walkPts.push(ac);
+
+    // markers לnקודות סיור בתוך subStops
+    if(a.subStops) a.subStops.forEach(function(ss){
+      if(!ss.coords) return;
+      allPts.push(ss.coords);
+      var ssIco = L.divIcon({html:'<div style="background:#e8b84b;color:#1a1a2e;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;border:2px solid #1a1a2e;">'+(ss.num||'·')+'</div>',className:'',iconSize:[18,18],iconAnchor:[9,9]});
+      L.marker(ss.coords,{icon:ssIco}).addTo(map)
+        .bindPopup('<b>'+ss.name+'</b>'+(ss.desc?'<br><small>'+ss.desc+'</small>':''));
+    });
   });
 
   if (walkPts.length > 1)
