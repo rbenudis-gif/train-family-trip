@@ -1726,9 +1726,9 @@ function generateRoute() {
       var ow=cat==='adult'?city.adultOW:city.adultOW*0.5;
       var extra=cat==='adult'?extraA:extraC;
       if(type==='singles')    return t.name+': ₪'+(ow*2+extra).toFixed(0)+' (רכבת ₪'+(ow*2).toFixed(0)+(extra?' + תחב׳ ₪'+extra.toFixed(0):'')+')'  ;
-      var dp=cat==='adult'?city.dayPassA:city.dayPassA*0.5;
-      if(type==='mixed')      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+dp:'₪'+(ow*2+extra).toFixed(0)+' כרטיסים');
-      return t.name+': '+(cat==='adult'?'חופשי יומי ₪'+dp:'חופשי יומי ₪'+dp);
+      var dp=city.dayPassA; // חופשי יומי — מחיר מלא לכולם, ללא הנחה לנוער
+      if(type==='mixed')      return t.name+': '+(cat==='adult'||cat==='young'?'חופשי יומי ₪'+dp:'₪'+(ow*2+extra).toFixed(0)+' כרטיסים');
+      return t.name+': חופשי יומי ₪'+dp;
     }).join('<br>');
   }
 
@@ -1794,13 +1794,13 @@ function calcStandalone() {
   var adults=parseInt(document.getElementById('sel-adults').value);
   var kids=parseInt(document.getElementById('sel-kids').value);
   if(!destKey){alert('בחרי יעד קודם');return;}
-  var p=PRICES_STANDALONE[destKey],aOW=p.adultOW,cOW=aOW*0.5,dpA=p.dayPassA,dpC=dpA*0.5;
-  var o1=adults*aOW*2+kids*cOW*2,o2=adults*dpA+kids*cOW*2,o3=adults*dpA+kids*dpC;
+  var p=PRICES_STANDALONE[destKey],aOW=p.adultOW,cOW=aOW*0.5,dpA=p.dayPassA;
+  var o1=adults*aOW*2+kids*cOW*2,o2=adults*dpA+kids*cOW*2,o3=(adults+kids)*dpA;
   var best=Math.min(o1,o2,o3);
   var opts=[
     {name:'כרטיסים בודדים',brk:adults+'×₪'+(aOW*2).toFixed(0)+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o1},
     {name:'חופשי למבוגרים + כרטיסים לילדים',brk:adults+'×₪'+dpA+' + '+kids+'×₪'+(cOW*2).toFixed(0),total:o2},
-    {name:'חופשי יומי לכולם',brk:adults+'×₪'+dpA+' + '+kids+'×₪'+dpC,total:o3}
+    {name:'חופשי יומי לכולם',brk:(adults+kids)+'×₪'+dpA+' (מחיר מלא לכולם)',total:o3}
   ];
   document.getElementById('calc-result').innerHTML=
     '<div class="result-wrap"><div class="result-head">ל'+p.label+' ('+adults+' מבוגר + '+kids+' ילדים):</div>'
